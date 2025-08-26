@@ -1,0 +1,272 @@
+@model QuizApplication.ViewModels.PracticeSetupViewModel
+
+@{
+    ViewData["Title"] = "Practice Setup";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-dumbbell"></i> Practice Mode Setup
+                    </h4>
+                    <p class="mb-0 small">Choose your practice preferences</p>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                        </div>
+                    }
+
+                    <form asp-action="Setup" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <!-- Practice Mode Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-cog text-primary"></i> Practice Mode
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card practice-mode-card @(Model.PracticeMode == "difficulty" ? "border-primary bg-light" : "")" data-mode="difficulty">
+                                        <div class="card-body text-center">
+                                            <input type="radio" asp-for="PracticeMode" value="difficulty" id="modeDifficulty" class="form-check-input d-none" />
+                                            <label for="modeDifficulty" class="w-100">
+                                                <i class="fas fa-signal fa-2x text-primary mb-2 d-block"></i>
+                                                <h6 class="card-title">Difficulty Practice</h6>
+                                                <small class="text-muted">Practice questions based on difficulty level only</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card practice-mode-card @(Model.PracticeMode == "category" ? "border-primary bg-light" : "")" data-mode="category">
+                                        <div class="card-body text-center">
+                                            <input type="radio" asp-for="PracticeMode" value="category" id="modeCategory" class="form-check-input d-none" />
+                                            <label for="modeCategory" class="w-100">
+                                                <i class="fas fa-tags fa-2x text-warning mb-2 d-block"></i>
+                                                <h6 class="card-title">Category Practice</h6>
+                                                <small class="text-muted">Practice questions from specific categories</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="PracticeMode" class="text-danger"></span>
+                        </div>
+
+                        <!-- Difficulty Level Selection -->
+                        <div class="mb-4">
+                            <label asp-for="DifficultyLevel" class="form-label">
+                                <i class="fas fa-signal text-danger"></i> Difficulty Level
+                            </label>
+                            <select asp-for="DifficultyLevel" class="form-select">
+                                <option value="">All Levels</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                            <div class="form-text">Select a specific difficulty or leave blank for all levels</div>
+                            <span asp-validation-for="DifficultyLevel" class="text-danger"></span>
+                        </div>
+
+                        <!-- Category Selection (only shown for category mode) -->
+                        <div class="mb-4" id="categorySelection" style="display: @(Model.PracticeMode == "category" ? "block" : "none")">
+                            <label class="form-label">
+                                <i class="fas fa-tags text-success"></i> Select Categories
+                            </label>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                Choose one or more categories for practice. Questions will be randomly selected from chosen categories.
+                            </div>
+                            <span asp-validation-for="SelectedCategoryIds" class="text-danger d-block mb-2"></span>
+                            
+                            @if (Model.AvailableCategories?.Any() == true)
+                            {
+                                <div class="row">
+                                    @foreach (var category in Model.AvailableCategories)
+                                    {
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="card category-card h-100 @(category.IsSelected ? "border-success" : "")">
+                                                <div class="card-body text-center">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input category-checkbox" 
+                                                               type="checkbox" 
+                                                               name="SelectedCategoryIds" 
+                                                               value="@category.CategoryId" 
+                                                               id="category_@category.CategoryId"
+                                                               @(category.IsSelected ? "checked" : "")>
+                                                        <label class="form-check-label w-100" for="category_@category.CategoryId">
+                                                            <i class="fas fa-folder-open fa-2x text-primary mb-2 d-block"></i>
+                                                            <h6 class="card-title">@category.CategoryName</h6>
+                                                            <small class="text-muted">
+                                                                @category.QuestionCount Question@(category.QuestionCount != 1 ? "s" : "") Available
+                                                            </small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    No categories with questions are available. Please contact an administrator.
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Practice Instructions -->
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-lightbulb"></i> Practice Mode Features</h6>
+                            <ul class="mb-0">
+                                <li>No time limit - take your time to think</li>
+                                <li>Immediate feedback after each answer</li>
+                                <li>See the correct answer and explanation</li>
+                                <li>Get unlimited random questions</li>
+                                <li>Practice anytime without affecting your quiz scores</li>
+                            </ul>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Dashboard" asp-controller="Users" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-info" id="startPracticeBtn">
+                                <i class="fas fa-play"></i> Start Practice
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Set initial practice mode based on model
+            var initialMode = '@Model.PracticeMode';
+            if (initialMode) {
+                $('input[name="PracticeMode"][value="' + initialMode + '"]').prop('checked', true);
+                $('.practice-mode-card[data-mode="' + initialMode + '"]').addClass('border-primary bg-light');
+                
+                if (initialMode === 'category') {
+                    $('#categorySelection').show();
+                }
+            }
+
+            // Practice mode card selection
+            $('.practice-mode-card').on('click', function() {
+                var mode = $(this).data('mode');
+                var radioBtn = $(this).find('input[type="radio"]');
+                
+                // Uncheck all radio buttons and remove selected styling
+                $('.practice-mode-card').removeClass('border-primary bg-light');
+                $('input[name="PracticeMode"]').prop('checked', false);
+                
+                // Select current card
+                $(this).addClass('border-primary bg-light');
+                radioBtn.prop('checked', true);
+                
+                // Show/hide category selection
+                if (mode === 'category') {
+                    $('#categorySelection').slideDown();
+                } else {
+                    $('#categorySelection').slideUp();
+                }
+                
+                updateStartButton();
+            });
+
+            // Category card selection styling
+            $('.category-checkbox').on('change', function() {
+                var card = $(this).closest('.category-card');
+                if (this.checked) {
+                    card.addClass('border-success bg-light');
+                } else {
+                    card.removeClass('border-success bg-light');
+                }
+                updateStartButton();
+            });
+
+            // Initial styling for checked categories
+            $('.category-checkbox:checked').each(function() {
+                $(this).closest('.category-card').addClass('border-success bg-light');
+            });
+
+            // Initial state
+            updateStartButton();
+
+            function updateStartButton() {
+                var practiceMode = $('input[name="PracticeMode"]:checked').val();
+                var startBtn = $('#startPracticeBtn');
+                
+                if (practiceMode === 'difficulty') {
+                    startBtn.prop('disabled', false);
+                } else if (practiceMode === 'category') {
+                    var hasSelectedCategories = $('.category-checkbox:checked').length > 0;
+                    startBtn.prop('disabled', !hasSelectedCategories);
+                } else {
+                    startBtn.prop('disabled', true);
+                }
+            }
+        });
+    </script>
+}
+
+<style>
+    .practice-mode-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #dee2e6;
+        height: 100%;
+    }
+
+    .practice-mode-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .practice-mode-card.border-primary {
+        border-color: #007bff !important;
+        background-color: #f8f9fa !important;
+    }
+
+    .category-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #dee2e6;
+    }
+
+    .category-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .category-card.border-success {
+        border-color: #28a745 !important;
+        background-color: #f8f9fa !important;
+    }
+
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .card-header {
+        border-bottom: 3px solid rgba(255,255,255,0.2);
+    }
+</style>

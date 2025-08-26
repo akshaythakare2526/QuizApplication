@@ -1,0 +1,163 @@
+@model QuizApplication.Models.QuizSessions
+
+@{
+    ViewData["Title"] = "Quiz Starting";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-rocket"></i> Ready to Start Quiz
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="quiz-info-container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <i class="fas fa-tag fa-2x text-primary mb-2"></i>
+                                        <h5>@Model.QuizTitle</h5>
+                                        <p class="text-muted">Quiz Title</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <i class="fas fa-question-circle fa-2x text-info mb-2"></i>
+                                        <h5>@Model.NumberOfQuestions</h5>
+                                        <p class="text-muted">Total Questions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                        <h5>@Model.TimeLimit Minutes</h5>
+                                        <p class="text-muted">Time Limit</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <i class="fas fa-signal fa-2x text-danger mb-2"></i>
+                                        <h5>@(string.IsNullOrEmpty(Model.DifficultyLevel) ? "All Levels" : Model.DifficultyLevel)</h5>
+                                        <p class="text-muted">Difficulty</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Quiz Instructions</h5>
+                        <ul class="mb-0">
+                            <li>You have <strong>@Model.TimeLimit minutes</strong> to complete this quiz</li>
+                            <li>The quiz contains <strong>@Model.NumberOfQuestions questions</strong></li>
+                            <li>You can navigate between questions using Next/Previous buttons</li>
+                            <li>Your answers are automatically saved</li>
+                            <li>You can review and change your answers before submitting</li>
+                            <li>The timer will be displayed at the top of each question</li>
+                            <li>The quiz will auto-submit when time expires</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Once you start the quiz, the timer will begin. Make sure you have a stable internet connection and enough time to complete the quiz.
+                    </div>
+
+                    <div class="text-center">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a asp-action="Setup" class="btn btn-secondary btn-lg me-md-3">
+                                <i class="fas fa-arrow-left"></i> Back to Setup
+                            </a>
+                            <button type="button" class="btn btn-success btn-lg" onclick="startQuiz(@Model.SessionId)">
+                                <i class="fas fa-play"></i> Start Quiz Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Modal -->
+            <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 mb-0">Preparing your quiz...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        function startQuiz(sessionId) {
+            // Show loading modal
+            var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+            loadingModal.show();
+            
+            // Redirect to quiz question page after a brief delay
+            setTimeout(function() {
+                window.location.href = '@Url.Action("Question", "Quiz")?sessionId=' + sessionId + '&questionIndex=0';
+            }, 1500);
+        }
+    </script>
+}
+
+<style>
+    .info-card {
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .quiz-info-container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 18px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        padding: 25px;
+    }
+</style>

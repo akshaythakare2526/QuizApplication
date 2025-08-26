@@ -1,0 +1,678 @@
+@model QuizApplication.ViewModels.QuizQuestionViewModel
+
+@{
+    ViewData["Title"] = $"Question {Model.CurrentQuestionIndex + 1} of {Model.TotalQuestions}";
+}
+
+<div class="container-fluid mt-3">
+    <!-- Quiz Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary fs-6">Question @(Model.CurrentQuestionIndex + 1) of @Model.TotalQuestions</span>
+                            <span class="badge bg-info fs-6 ms-2">@Model.CategoryName</span>
+                            <span class="badge bg-@(Model.DifficultyLevel == "Easy" ? "success" : Model.DifficultyLevel == "Medium" ? "warning" : "danger") fs-6 ms-2">@Model.DifficultyLevel</span>
+                        </div>
+                        <div class="text-end">
+                            <div id="timer" class="fs-4 fw-bold text-danger">
+                                <i class="fas fa-clock"></i> <span id="timeDisplay">00:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Question Content -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Question Text -->
+                    <div class="mb-4">
+                        <h4 class="question-text">@Model.QuestionText</h4>
+                        
+                        @if (Model.QuestionImageData != null)
+                        {
+                            <div class="text-center mt-3">
+                                <img src="@Url.Action("GetImage", "Quiz", new { questionId = Model.QuestionId })" 
+                                     alt="Question Image" 
+                                     class="img-fluid rounded shadow-sm question-image"
+                                     style="max-height: 400px;">
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div class="options-container">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card @(Model.SelectedOption == "Option1" ? "selected" : "")" data-option="Option1">
+                                    <div class="option-header">
+                                        <span class="option-letter">A</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option1
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card @(Model.SelectedOption == "Option2" ? "selected" : "")" data-option="Option2">
+                                    <div class="option-header">
+                                        <span class="option-letter">B</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option2
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card @(Model.SelectedOption == "Option3" ? "selected" : "")" data-option="Option3">
+                                    <div class="option-header">
+                                        <span class="option-letter">C</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option3
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card @(Model.SelectedOption == "Option4" ? "selected" : "")" data-option="Option4">
+                                    <div class="option-header">
+                                        <span class="option-letter">D</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option4
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            @if (Model.HasPrevious)
+                            {
+                                <button type="button" class="btn btn-outline-secondary" onclick="navigateToQuestion(@(Model.CurrentQuestionIndex - 1))">
+                                    <i class="fas fa-arrow-left"></i> Previous
+                                </button>
+                            }
+                        </div>
+                        <div>
+                            @if (Model.HasNext)
+                            {
+                                <button type="button" class="btn btn-primary" onclick="navigateToQuestion(@(Model.CurrentQuestionIndex + 1))">
+                                    Next <i class="fas fa-arrow-right"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-success" onclick="showCompleteModal()">
+                                    <i class="fas fa-check"></i> Complete Quiz
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow sticky-top" style="top: 20px;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Quiz Progress
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Bar -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Progress</small>
+                            <small>@Model.AnsweredQuestions.Count/@Model.TotalQuestions</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @((double)Model.AnsweredQuestions.Count / Model.TotalQuestions * 100)%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Navigator -->
+                    <div class="question-navigator">
+                        <h6>Jump to Question:</h6>
+                        <div class="question-grid">
+                            @for (int i = 0; i < Model.TotalQuestions; i++)
+                            {
+                                var questionNumber = i + 1;
+                                var questionId = Model.AllQuestionIds.Count > i ? Model.AllQuestionIds[i] : 0;
+                                var isAnswered = Model.AnsweredQuestions.Contains(questionId);
+                                var isCurrent = i == Model.CurrentQuestionIndex;
+                                var cssClass = isCurrent ? "btn-primary" : (isAnswered ? "btn-success" : "btn-outline-secondary");
+                                
+                                <button type="button" 
+                                        class="btn @cssClass btn-sm question-nav-btn" 
+                                        onclick="navigateToQuestion(@i)"
+                                        title="@(isCurrent ? "Current Question" : (isAnswered ? "Answered" : "Not Answered"))">
+                                    @questionNumber
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="mt-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-number text-success">@Model.AnsweredQuestions.Count</div>
+                                    <div class="stat-label">Answered</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-number text-primary">@(Model.CurrentQuestionIndex + 1)</div>
+                                    <div class="stat-label">Current</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-number text-muted">@(Model.TotalQuestions - Model.AnsweredQuestions.Count)</div>
+                                    <div class="stat-label">Remaining</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Quiz Button -->
+                    <div class="d-grid mt-4">
+                        <button type="button" class="btn btn-warning" onclick="showCompleteModal()">
+                            <i class="fas fa-flag-checkered"></i> Finish Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Complete Quiz Modal -->
+<div class="modal fade" id="completeModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">
+                    <i class="fas fa-flag-checkered"></i> Complete Quiz
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Quiz Summary</h6>
+                    <ul class="mb-0">
+                        <li>Total Questions: <strong>@Model.TotalQuestions</strong></li>
+                        <li>Answered Questions: <strong><span id="modalAnsweredCount">@Model.AnsweredQuestions.Count</span></strong></li>
+                        <li>Unanswered Questions: <strong><span id="modalUnansweredCount">@(Model.TotalQuestions - Model.AnsweredQuestions.Count)</span></strong></li>
+                    </ul>
+                </div>
+                <p>Are you sure you want to submit your quiz? You won't be able to change your answers after submission.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-success" onclick="completeQuiz()">
+                    <i class="fas fa-check"></i> Submit Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form data -->
+<input type="hidden" id="sessionId" value="@Model.SessionId" />
+<input type="hidden" id="questionId" value="@Model.QuestionId" />
+<input type="hidden" id="currentIndex" value="@Model.CurrentQuestionIndex" />
+<input type="hidden" id="remainingTime" value="@Model.RemainingTimeInSeconds" />
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        let questionStartTime = Date.now();
+        let selectedOption = '@Model.SelectedOption';
+        let timeRemaining = @Model.RemainingTimeInSeconds;
+        let timerInterval;
+
+        $(document).ready(function() {
+            startTimer();
+            
+            // Option selection
+            $('.option-card').on('click', function() {
+                selectOption($(this).data('option'));
+            });
+
+            // Prevent context menu on options
+            $('.option-card').on('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // Auto-save on option selection
+            $(document).on('optionSelected', function() {
+                saveAnswer();
+            });
+        });
+
+        function selectOption(option) {
+            $('.option-card').removeClass('selected');
+            $('[data-option="' + option + '"]').addClass('selected');
+            selectedOption = option;
+            $(document).trigger('optionSelected');
+        }
+
+        function saveAnswer() {
+            if (!selectedOption) return;
+
+            const timeTaken = Math.floor((Date.now() - questionStartTime) / 1000);
+            
+            $.ajax({
+                url: '@Url.Action("SaveAnswer", "Quiz")',
+                type: 'POST',
+                data: {
+                    sessionId: $('#sessionId').val(),
+                    questionId: $('#questionId').val(),
+                    selectedOption: selectedOption,
+                    timeTaken: timeTaken,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update progress indicators
+                        updateProgress();
+                    }
+                },
+                error: function() {
+                    console.log('Error saving answer');
+                }
+            });
+        }
+
+        function navigateToQuestion(questionIndex) {
+            // Save current answer before navigation
+            if (selectedOption) {
+                saveAnswer();
+            }
+            
+            // Use AJAX to load the next question without page reload
+            $.ajax({
+                url: '@Url.Action("GetQuestion", "Quiz")',
+                type: 'GET',
+                data: {
+                    sessionId: $('#sessionId').val(),
+                    questionIndex: questionIndex
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the entire question content
+                        updateQuestionContent(response);
+                        // Update current question index
+                        $('#currentIndex').val(questionIndex);
+                        questionStartTime = Date.now();
+                    } else {
+                        if (response.expired || response.completed) {
+                            alert(response.message);
+                            if (response.expired || response.completed) {
+                                window.location.href = '@Url.Action("Result", "Quiz")?sessionId=' + $('#sessionId').val();
+                            }
+                        } else {
+                            // Fallback to page navigation if AJAX fails
+                            window.location.href = '@Url.Action("Question", "Quiz")?sessionId=' + 
+                                $('#sessionId').val() + '&questionIndex=' + questionIndex;
+                        }
+                    }
+                },
+                error: function() {
+                    // Fallback to page navigation if AJAX fails
+                    window.location.href = '@Url.Action("Question", "Quiz")?sessionId=' + 
+                        $('#sessionId').val() + '&questionIndex=' + questionIndex;
+                }
+            });
+        }
+
+        function updateQuestionContent(questionData) {
+            // Update question text and metadata
+            $('.question-text').text(questionData.questionText);
+            $('#questionId').val(questionData.questionId);
+            
+            // Update badges
+            $('.badge:contains("Question")').text(`Question ${questionData.currentQuestionIndex + 1} of ${questionData.totalQuestions}`);
+            $('.badge.bg-info').text(questionData.categoryName);
+            
+            // Update difficulty badge
+            const difficultyBadge = $('.badge.bg-success, .badge.bg-warning, .badge.bg-danger');
+            difficultyBadge.removeClass('bg-success bg-warning bg-danger')
+                .addClass(questionData.difficultyLevel === 'Easy' ? 'bg-success' : 
+                         (questionData.difficultyLevel === 'Medium' ? 'bg-warning' : 'bg-danger'))
+                .text(questionData.difficultyLevel);
+            
+            // Update page title
+            document.title = `Question ${questionData.currentQuestionIndex + 1} of ${questionData.totalQuestions}`;
+            
+            // Update question image if exists
+            if (questionData.hasImage) {
+                if ($('.question-image').length === 0) {
+                    $('.question-text').after(`
+                        <div class="text-center mt-3">
+                            <img src="${questionData.imageUrl}" 
+                                 alt="Question Image" 
+                                 class="img-fluid rounded shadow-sm question-image"
+                                 style="max-height: 400px;">
+                        </div>
+                    `);
+                } else {
+                    $('.question-image').attr('src', questionData.imageUrl);
+                }
+            } else {
+                $('.question-image').parent().remove();
+            }
+            
+            // Update answer options
+            $('.option-card[data-option="Option1"] .option-content').text(questionData.option1);
+            $('.option-card[data-option="Option2"] .option-content').text(questionData.option2);
+            $('.option-card[data-option="Option3"] .option-content').text(questionData.option3);
+            $('.option-card[data-option="Option4"] .option-content').text(questionData.option4);
+            
+            // Clear previous selection and set new one
+            $('.option-card').removeClass('selected');
+            selectedOption = questionData.selectedOption || '';
+            if (selectedOption) {
+                $(`[data-option="${selectedOption}"]`).addClass('selected');
+            }
+            
+            // Update remaining time
+            timeRemaining = questionData.remainingTimeInSeconds;
+            
+            // Update navigation buttons
+            updateNavigationButtons(questionData);
+            
+            // Update progress sidebar
+            updateProgressSidebar(questionData);
+        }
+
+        function updateNavigationButtons(questionData) {
+            const navigationContainer = $('.d-flex.justify-content-between.mt-4');
+            const leftDiv = navigationContainer.find('div:first');
+            const rightDiv = navigationContainer.find('div:last');
+            
+            // Update Previous button
+            leftDiv.empty();
+            if (questionData.hasPrevious) {
+                leftDiv.html(`
+                    <button type="button" class="btn btn-outline-secondary" onclick="navigateToQuestion(${questionData.currentQuestionIndex - 1})">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                `);
+            }
+            
+            // Update Next/Complete button
+            rightDiv.empty();
+            if (questionData.hasNext) {
+                rightDiv.html(`
+                    <button type="button" class="btn btn-primary" onclick="navigateToQuestion(${questionData.currentQuestionIndex + 1})">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                `);
+            } else {
+                rightDiv.html(`
+                    <button type="button" class="btn btn-success" onclick="showCompleteModal()">
+                        <i class="fas fa-check"></i> Complete Quiz
+                    </button>
+                `);
+            }
+        }
+
+        function updateProgressSidebar(questionData) {
+            // Update progress bar
+            const answeredCount = questionData.answeredQuestions.length;
+            const progress = (answeredCount / questionData.totalQuestions) * 100;
+            $('.progress-bar').css('width', `${progress}%`);
+            $('.d-flex.justify-content-between small:last-child').text(`${answeredCount}/${questionData.totalQuestions}`);
+            
+            // Update question navigator buttons
+            $('.question-nav-btn').each(function(index) {
+                const btn = $(this);
+                if (index < questionData.allQuestionIds.length) {
+                    const questionId = questionData.allQuestionIds[index];
+                    const isAnswered = questionData.answeredQuestions.includes(questionId);
+                    const isCurrent = index === questionData.currentQuestionIndex;
+                    
+                    btn.removeClass('btn-primary btn-success btn-outline-secondary');
+                    if (isCurrent) {
+                        btn.addClass('btn-primary');
+                        btn.attr('title', 'Current Question');
+                    } else if (isAnswered) {
+                        btn.addClass('btn-success');
+                        btn.attr('title', 'Answered');
+                    } else {
+                        btn.addClass('btn-outline-secondary');
+                        btn.attr('title', 'Not Answered');
+                    }
+                    
+                    btn.attr('onclick', `navigateToQuestion(${index})`);
+                }
+            });
+            
+            // Update statistics
+            $('.stat-number.text-success').text(answeredCount);
+            $('.stat-number.text-primary').text(questionData.currentQuestionIndex + 1);
+            $('.stat-number.text-muted').text(questionData.totalQuestions - answeredCount);
+            
+            // Update modal counts
+            $('#modalAnsweredCount').text(answeredCount);
+            $('#modalUnansweredCount').text(questionData.totalQuestions - answeredCount);
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up! The quiz will be submitted automatically.');
+                    completeQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+            
+            let display = '';
+            if (hours > 0) {
+                display = String(hours).padStart(2, '0') + ':';
+            }
+            display += String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            $('#timeDisplay').text(display);
+            
+            // Change color based on remaining time
+            const timerElement = $('#timer');
+            if (timeRemaining <= 300) { // 5 minutes
+                timerElement.removeClass('text-danger text-warning').addClass('text-danger');
+                if (timeRemaining <= 60) { // 1 minute
+                    timerElement.addClass('timer-blink');
+                }
+            } else if (timeRemaining <= 600) { // 10 minutes
+                timerElement.removeClass('text-danger text-warning').addClass('text-warning');
+            }
+        }
+
+        function updateProgress() {
+            // This would typically update the progress bar and statistics
+            // For now, we'll just trigger a page refresh on navigation
+        }
+
+        function showCompleteModal() {
+            $('#completeModal').modal('show');
+        }
+
+        function completeQuiz() {
+            $.ajax({
+                url: '@Url.Action("CompleteQuiz", "Quiz")',
+                type: 'POST',
+                data: {
+                    sessionId: $('#sessionId').val(),
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("Result", "Quiz")?sessionId=' + $('#sessionId').val();
+                    } else {
+                        alert('Error completing quiz: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Error completing quiz. Please try again.');
+                }
+            });
+        }
+
+        // Clear timer on page unload
+        window.addEventListener('beforeunload', function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        });
+    </script>
+}
+
+<style>
+    .option-card {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+    }
+
+    .option-card:hover {
+        border-color: #007bff;
+        background: #e3f2fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .option-card.selected {
+        border-color: #28a745;
+        background: #d4edda;
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .option-header {
+        flex: 0 0 40px;
+        margin-right: 15px;
+    }
+
+    .option-letter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .option-card.selected .option-letter {
+        background: #28a745;
+    }
+
+    .option-content {
+        flex: 1;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .question-text {
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .question-image {
+        border: 3px solid #dee2e6;
+        transition: transform 0.3s ease;
+    }
+
+    .question-image:hover {
+        transform: scale(1.05);
+    }
+
+    .question-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .question-nav-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .stat-item {
+        padding: 10px 0;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #6c757d;
+    }
+
+    .timer-blink {
+        animation: blink 1s infinite;
+    }
+
+    @@keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+
+    @@media (max-width: 768px) {
+        .question-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .option-card {
+            min-height: 60px;
+            padding: 10px;
+        }
+    }
+</style>

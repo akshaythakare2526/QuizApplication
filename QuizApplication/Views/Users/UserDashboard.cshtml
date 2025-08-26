@@ -1,0 +1,323 @@
+@{
+    ViewData["Title"] = "User Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-home text-primary me-2"></i>My Dashboard
+            </h1>
+            <p class="text-muted mb-0">Welcome back! Ready for your next quiz challenge?</p>
+        </div>
+        <div>
+            <span class="badge bg-primary fs-6 me-2">User</span>
+            <span class="text-muted">Hello, @ViewBag.Username</span>
+        </div>
+    </div>
+
+    <!-- User Stats Row -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Quizzes Taken</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.MyQuizSessions</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.CompletedQuizzes</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Answers Given</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.MyAnswers</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list-ul fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Available Categories</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.AvailableCategories</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tags fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Actions Panel -->
+        <div class="col-lg-8">
+            <!-- Quick Actions -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-primary text-white">
+                    <h6 class="m-0 font-weight-bold">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Take Quiz -->
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-success text-white h-100">
+                                <div class="card-body text-center d-flex flex-column">
+                                    <div class="mb-3">
+                                        <i class="fas fa-play fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Take Quiz</h5>
+                                    <p class="card-text flex-grow-1">Start a new quiz session and test your knowledge</p>
+                                    <a href="@Url.Action("Setup", "Quiz")" class="btn btn-light btn-sm mt-auto">Start Quiz</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Practice Mode -->
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-info text-white h-100">
+                                <div class="card-body text-center d-flex flex-column">
+                                    <div class="mb-3">
+                                        <i class="fas fa-dumbbell fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Practice Mode</h5>
+                                    <p class="card-text flex-grow-1">Practice with random questions without time limit</p>
+                                    <a href="@Url.Action("Setup", "Practice", new { mode = "difficulty" })" class="btn btn-light btn-sm mt-auto">Practice Now</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Browse Categories -->
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-warning text-white h-100">
+                                <div class="card-body text-center d-flex flex-column">
+                                    <div class="mb-3">
+                                        <i class="fas fa-th-large fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title">Categories</h5>
+                                    <p class="card-text flex-grow-1">Browse available quiz categories and topics</p>
+                                    <a href="@Url.Action("Setup", "Practice", new { mode = "category" })" class="btn btn-light btn-sm mt-auto">Browse</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.MyQuizSessions > 0)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Great job!</strong> You've completed @ViewBag.CompletedQuizzes out of @ViewBag.MyQuizSessions quiz sessions.
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: @(ViewBag.MyQuizSessions > 0 ? (ViewBag.CompletedQuizzes * 100 / ViewBag.MyQuizSessions) : 0)%">
+                                        @(ViewBag.MyQuizSessions > 0 ? (ViewBag.CompletedQuizzes * 100 / ViewBag.MyQuizSessions) : 0)%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No quiz activity yet</h5>
+                            <p class="text-muted">Ready to take your first quiz? Click "Start Quiz" to begin!</p>
+                            <a href="@Url.Action("Setup", "Quiz")" class="btn btn-primary">Take Your First Quiz</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- User Profile Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-primary text-white">
+                    <h6 class="m-0 font-weight-bold">My Profile</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x"></i>
+                            </div>
+                        </div>
+                        <h5>@ViewBag.Username</h5>
+                        <p class="text-muted">@ViewBag.CurrentUser.Email</p>
+                        <span class="badge bg-primary mb-3">Quiz Participant</span>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Profile", "Users")" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-user me-2"></i>View Profile
+                            </a>
+                            <a href="@Url.Action("EditProfile", "Users")" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                            <a href="@Url.Action("QuizHistory", "Users")" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-history me-2"></i>Quiz History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Statistics -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">My Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small">Completion Rate</span>
+                            <span class="small font-weight-bold">@(ViewBag.MyQuizSessions > 0 ? (ViewBag.CompletedQuizzes * 100 / ViewBag.MyQuizSessions) : 0)%</span>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-success" style="width: @(ViewBag.MyQuizSessions > 0 ? (ViewBag.CompletedQuizzes * 100 / ViewBag.MyQuizSessions) : 0)%"></div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="border-right">
+                                    <h4 class="mb-0">@ViewBag.MyQuizSessions</h4>
+                                    <small class="text-muted">Total Attempts</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="mb-0">@ViewBag.MyAnswers</h4>
+                                <small class="text-muted">Questions Answered</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievement Card -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Achievement</h6>
+                </div>
+                <div class="card-body text-center">
+                    @if (ViewBag.CompletedQuizzes >= 10)
+                    {
+                        <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                        <h6 class="text-warning">Quiz Master</h6>
+                        <small class="text-muted">Completed 10+ quizzes</small>
+                    }
+                    else if (ViewBag.CompletedQuizzes >= 5)
+                    {
+                        <i class="fas fa-medal fa-3x text-info mb-3"></i>
+                        <h6 class="text-info">Quiz Expert</h6>
+                        <small class="text-muted">Completed 5+ quizzes</small>
+                    }
+                    else if (ViewBag.CompletedQuizzes >= 1)
+                    {
+                        <i class="fas fa-star fa-3x text-success mb-3"></i>
+                        <h6 class="text-success">Quiz Starter</h6>
+                        <small class="text-muted">Completed your first quiz</small>
+                    }
+                    else
+                    {
+                        <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                        <h6 class="text-primary">Ready to Start</h6>
+                        <small class="text-muted">Take your first quiz to earn achievements</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+    .text-gray-800 {
+        color: #5a5c69 !important;
+    }
+    .text-gray-300 {
+        color: #dddfeb !important;
+    }
+    .font-weight-bold {
+        font-weight: 700 !important;
+    }
+    .text-xs {
+        font-size: 0.7rem;
+    }
+    .progress-sm {
+        height: 0.5rem;
+    }
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    .border-right {
+        border-right: 1px solid #e3e6f0 !important;
+    }
+</style>

@@ -1,0 +1,135 @@
+@model QuizApplication.Models.Questions
+
+@{
+    ViewData["Title"] = "Create Question";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-plus"></i> Create New Question
+            </h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label">Category</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="DifficultyLevel" class="form-label">Difficulty Level</label>
+                            <select asp-for="DifficultyLevel" class="form-select" asp-items="ViewBag.DifficultyLevels">
+                                <option value="">-- Select Difficulty --</option>
+                            </select>
+                            <span asp-validation-for="DifficultyLevel" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="QuestionText" class="form-label">Question Text</label>
+                    <textarea asp-for="QuestionText" class="form-control" rows="3" placeholder="Enter the question text"></textarea>
+                    <span asp-validation-for="QuestionText" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ImageFile" class="form-label">Question Image (Optional)</label>
+                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageFile">
+                    <div class="form-text">Supported formats: JPEG, PNG, GIF (Max size: 5MB)</div>
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="mt-3" style="display: none;">
+                        <img id="previewImg" src="#" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Option1" class="form-label">Option A</label>
+                            <input asp-for="Option1" class="form-control" placeholder="Enter option A" />
+                            <span asp-validation-for="Option1" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Option2" class="form-label">Option B</label>
+                            <input asp-for="Option2" class="form-control" placeholder="Enter option B" />
+                            <span asp-validation-for="Option2" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Option3" class="form-label">Option C</label>
+                            <input asp-for="Option3" class="form-control" placeholder="Enter option C" />
+                            <span asp-validation-for="Option3" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Option4" class="form-label">Option D</label>
+                            <input asp-for="Option4" class="form-control" placeholder="Enter option D" />
+                            <span asp-validation-for="Option4" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CorrectedOption" class="form-label">Correct Answer</label>
+                    <select asp-for="CorrectedOption" class="form-select" asp-items="ViewBag.CorrectOptions">
+                        <option value="">-- Select Correct Option --</option>
+                    </select>
+                    <span asp-validation-for="CorrectedOption" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Index" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Create Question
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        // Image preview functionality
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+}

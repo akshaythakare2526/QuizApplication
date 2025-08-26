@@ -1,0 +1,444 @@
+@model QuizApplication.Models.Users
+@{
+    ViewData["Title"] = "Edit My Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11">
+            <!-- Page Header -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-user-edit text-primary me-2"></i>Edit My Profile
+                    </h1>
+                    <p class="text-muted mb-0">Update your personal information and account settings</p>
+                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Users")">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Profile", "Users")">Profile</a></li>
+                        <li class="breadcrumb-item active">Edit Profile</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="row">
+                <!-- Main Profile Form -->
+                <div class="col-lg-8">
+                    <!-- Personal Information Card -->
+                    <div class="card shadow border-0 mb-4">
+                        <div class="card-header bg-gradient-primary text-white py-3">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user me-2"></i>Personal Information
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.Error
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+                            @if (ViewBag.Success != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>@ViewBag.Success
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+                            
+                            <form asp-action="EditProfile" method="post" id="profileForm">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display: none;"></div>
+                                <input type="hidden" asp-for="Id" />
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input asp-for="Username" type="text" class="form-control form-control-lg" id="username" placeholder="Username" required />
+                                            <label for="username"><i class="fas fa-user me-2"></i>Username</label>
+                                            <span asp-validation-for="Username" class="text-danger small"></span>
+                                            <div class="form-text">This is how you'll be displayed to other users</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input asp-for="Email" type="email" class="form-control form-control-lg" id="email" placeholder="Email Address" required />
+                                            <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                                            <span asp-validation-for="Email" class="text-danger small"></span>
+                                            <div class="form-text">Used for login and notifications</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg me-2" onclick="resetForm()">
+                                        <i class="fas fa-undo me-2"></i>Reset Changes
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save me-2"></i>Update Profile
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Password Change Card -->
+                    <div class="card shadow border-0">
+                        <div class="card-header bg-gradient-warning text-white py-3">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form asp-action="EditProfile" method="post" id="passwordForm">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="hidden" asp-for="Username" />
+                                <input type="hidden" asp-for="Email" />
+                                <input type="hidden" name="changePassword" value="true" />
+                                
+                                <div class="alert alert-info mb-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Security Notice:</strong> Your current password is required to make any password changes. The new password must be at least 6 characters long.
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Current Password" />
+                                            <label for="currentPassword"><i class="fas fa-lock me-2"></i>Current Password</label>
+                                            <div class="form-text">Enter your current password</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password" />
+                                            <label for="newPassword"><i class="fas fa-key me-2"></i>New Password</label>
+                                            <div class="form-text">At least 6 characters</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" />
+                                            <label for="confirmPassword"><i class="fas fa-check me-2"></i>Confirm Password</label>
+                                            <div class="form-text">Must match new password</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Password Strength Indicator -->
+                                <div id="passwordStrength" class="mb-3" style="display: none;">
+                                    <small class="text-muted">Password strength:</small>
+                                    <div class="progress" style="height: 8px;">
+                                        <div id="strengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small id="strengthText" class="form-text"></small>
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="clearPasswordFields()">
+                                        <i class="fas fa-eraser me-2"></i>Clear Fields
+                                    </button>
+                                    <button type="submit" class="btn btn-warning ms-2">
+                                        <i class="fas fa-key me-2"></i>Change Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Profile Summary -->
+                    <div class="card shadow border-0 mb-4">
+                        <div class="card-header bg-gradient-info text-white py-3">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-id-card me-2"></i>Current Profile
+                            </h6>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                            </div>
+                            <h5>@Model.Username</h5>
+                            <p class="text-muted mb-2">@Model.Email</p>
+                            <span class="badge @(Model.Role == "Admin" ? "bg-danger" : "bg-primary") fs-6">@Model.Role</span>
+                            
+                            <hr>
+                            
+                            <div class="small text-muted">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>User ID:</strong><br>
+                                        #@Model.Id
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Status:</strong><br>
+                                        <span class="text-success">Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card shadow border-0 mb-4">
+                        <div class="card-header bg-gradient-secondary text-white py-3">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-bolt me-2"></i>Quick Actions
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Dashboard", "Users")" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a>
+                                <a href="@Url.Action("Profile", "Users")" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-user me-2"></i>View Profile
+                                </a>
+                                <a href="@Url.Action("QuizHistory", "Users")" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-history me-2"></i>Quiz History
+                                </a>
+                                <hr>
+                                <a href="@Url.Action("Logout", "Users")" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Tips -->
+                    <div class="card shadow border-0">
+                        <div class="card-header py-3">
+                            <h6 class="card-title mb-0 text-warning">
+                                <i class="fas fa-shield-alt me-2"></i>Security Tips
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <small class="text-muted">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Use a strong, unique password
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Keep your email updated
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Review your profile regularly
+                                    </li>
+                                    <li class="mb-0">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Log out from shared computers
+                                    </li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Form validation and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPasswordField = document.getElementById('newPassword');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const strengthIndicator = document.getElementById('passwordStrength');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            // Password strength checker
+            newPasswordField.addEventListener('input', function() {
+                const password = this.value;
+                if (password.length > 0) {
+                    strengthIndicator.style.display = 'block';
+                    const strength = checkPasswordStrength(password);
+                    updateStrengthIndicator(strength);
+                } else {
+                    strengthIndicator.style.display = 'none';
+                }
+            });
+            
+            // Password confirmation
+            confirmPasswordField.addEventListener('input', function() {
+                const newPassword = newPasswordField.value;
+                const confirmPassword = this.value;
+                
+                if (confirmPassword.length > 0) {
+                    if (newPassword === confirmPassword) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                }
+            });
+        });
+        
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const checks = [
+                password.length >= 8,
+                /[a-z]/.test(password),
+                /[A-Z]/.test(password),
+                /[0-9]/.test(password),
+                /[^a-zA-Z0-9]/.test(password)
+            ];
+            
+            strength = checks.filter(check => check).length;
+            return strength;
+        }
+        
+        function updateStrengthIndicator(strength) {
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            const colors = ['danger', 'danger', 'warning', 'info', 'success'];
+            const texts = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+            const widths = [20, 40, 60, 80, 100];
+            
+            strengthBar.className = `progress-bar bg-${colors[strength - 1]}`;
+            strengthBar.style.width = `${widths[strength - 1]}%`;
+            strengthText.textContent = texts[strength - 1];
+            strengthText.className = `form-text text-${colors[strength - 1]}`;
+        }
+        
+        function resetForm() {
+            if (confirm('Are you sure you want to reset all changes?')) {
+                document.getElementById('profileForm').reset();
+            }
+        }
+        
+        function clearPasswordFields() {
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('passwordStrength').style.display = 'none';
+            
+            // Clear validation classes
+            document.getElementById('confirmPassword').classList.remove('is-valid', 'is-invalid');
+        }
+        
+        // Form submission validation
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // If any password field is filled, validate all
+            if (currentPassword || newPassword || confirmPassword) {
+                if (!currentPassword) {
+                    alert('Current password is required to change password.');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (!newPassword) {
+                    alert('New password is required.');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    alert('New password must be at least 6 characters long.');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    e.preventDefault();
+                    return;
+                }
+            } else {
+                // If no password fields are filled, don't submit password form
+                e.preventDefault();
+                alert('Please fill in the password fields to change your password, or use the "Update Profile" form above for other changes.');
+            }
+        });
+    </script>
+    
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+        }
+        .bg-gradient-warning {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+        }
+        .bg-gradient-info {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+        }
+        .bg-gradient-secondary {
+            background: linear-gradient(45deg, #6c757d, #545b62);
+        }
+        
+        .text-gray-800 {
+            color: #5a5c69;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
+        
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .form-floating input:focus,
+        .form-floating select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .is-valid {
+            border-color: #198754;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .progress {
+            border-radius: 10px;
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+}

@@ -1,0 +1,156 @@
+@model IEnumerable<QuizApplication.Models.Questions>
+
+@{
+    ViewData["Title"] = "Questions Management";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-question-circle text-primary"></i>
+            Questions Management
+        </h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Question
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Question Text</th>
+                                <th>Image</th>
+                                <th>Difficulty</th>
+                                <th>Correct Answer</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.QuestionId)</td>
+                                    <td>
+                                        <span class="badge bg-info">@Html.DisplayFor(modelItem => item.Category.CategoryName)</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var questionText = item.QuestionText.Length > 50 ? 
+                                                item.QuestionText.Substring(0, 50) + "..." : 
+                                                item.QuestionText;
+                                        }
+                                        <span title="@item.QuestionText">@questionText</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.QuestionImageData != null)
+                                        {
+                                            <i class="fas fa-image text-success" title="Has Image"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-image text-muted" title="No Image"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            string badgeClass = item.DifficultyLevel switch
+                                            {
+                                                "Easy" => "bg-success",
+                                                "Medium" => "bg-warning",
+                                                "Hard" => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @badgeClass">@Html.DisplayFor(modelItem => item.DifficultyLevel)</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            string correctAnswer = item.CorrectedOption switch
+                                            {
+                                                "Option1" => "A",
+                                                "Option2" => "B",
+                                                "Option3" => "C",
+                                                "Option4" => "D",
+                                                _ => item.CorrectedOption
+                                            };
+                                        }
+                                        <span class="badge bg-primary">Option @correctAnswer</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.QuestionId" class="btn btn-info btn-sm" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.QuestionId" class="btn btn-warning btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.QuestionId" class="btn btn-danger btn-sm" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Total Questions: <strong>@Model.Count()</strong>
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-question-circle fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Questions Found</h4>
+                    <p class="text-muted">Start by creating your first question.</p>
+                    <a asp-action="Create" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Create First Question
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Dashboard" asp-controller="Users" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a asp-action="Index" asp-controller="Categories" class="btn btn-outline-primary ms-2">
+            <i class="fas fa-tags"></i> Manage Categories
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+}

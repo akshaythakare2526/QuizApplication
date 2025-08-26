@@ -1,0 +1,432 @@
+@model QuizApplication.ViewModels.QuizResultViewModel
+
+@{
+    ViewData["Title"] = "Quiz Results";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Result Header -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-gradient-primary text-white text-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-trophy"></i> Quiz Completed!
+                    </h2>
+                    <h4 class="mb-0">@Model.QuizTitle</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="result-stat">
+                                <div class="stat-icon text-primary">
+                                    <i class="fas fa-chart-pie fa-3x"></i>
+                                </div>
+                                <h3 class="stat-number">@Model.Percentage.ToString("F1")%</h3>
+                                <p class="stat-label">Overall Score</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="result-stat">
+                                <div class="stat-icon text-success">
+                                    <i class="fas fa-check-circle fa-3x"></i>
+                                </div>
+                                <h3 class="stat-number">@Model.CorrectAnswers</h3>
+                                <p class="stat-label">Correct Answers</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="result-stat">
+                                <div class="stat-icon text-danger">
+                                    <i class="fas fa-times-circle fa-3x"></i>
+                                </div>
+                                <h3 class="stat-number">@Model.WrongAnswers</h3>
+                                <p class="stat-label">Wrong Answers</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="result-stat">
+                                <div class="stat-icon text-warning">
+                                    <i class="fas fa-clock fa-3x"></i>
+                                </div>
+                                <h3 class="stat-number">@Model.TimeTaken.ToString(@"mm\:ss")</h3>
+                                <p class="stat-label">Time Taken</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="progress-item">
+                                    <label>Correct Answers</label>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-success" style="width: @((double)Model.CorrectAnswers / Model.TotalQuestions * 100)%"></div>
+                                    </div>
+                                    <small>@Model.CorrectAnswers/@Model.TotalQuestions</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="progress-item">
+                                    <label>Wrong Answers</label>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-danger" style="width: @((double)Model.WrongAnswers / Model.TotalQuestions * 100)%"></div>
+                                    </div>
+                                    <small>@Model.WrongAnswers/@Model.TotalQuestions</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="progress-item">
+                                    <label>Unanswered</label>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-warning" style="width: @((double)Model.UnansweredQuestions / Model.TotalQuestions * 100)%"></div>
+                                    </div>
+                                    <small>@Model.UnansweredQuestions/@Model.TotalQuestions</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Badge -->
+                    <div class="text-center mt-4">
+                        @{
+                            string performanceBadge = "";
+                            string performanceText = "";
+                            string performanceIcon = "";
+                            
+                            if (Model.Percentage >= 90)
+                            {
+                                performanceBadge = "bg-success";
+                                performanceText = "Excellent!";
+                                performanceIcon = "fas fa-star";
+                            }
+                            else if (Model.Percentage >= 80)
+                            {
+                                performanceBadge = "bg-primary";
+                                performanceText = "Very Good!";
+                                performanceIcon = "fas fa-thumbs-up";
+                            }
+                            else if (Model.Percentage >= 70)
+                            {
+                                performanceBadge = "bg-info";
+                                performanceText = "Good!";
+                                performanceIcon = "fas fa-smile";
+                            }
+                            else if (Model.Percentage >= 60)
+                            {
+                                performanceBadge = "bg-warning";
+                                performanceText = "Fair";
+                                performanceIcon = "fas fa-meh";
+                            }
+                            else
+                            {
+                                performanceBadge = "bg-danger";
+                                performanceText = "Needs Improvement";
+                                performanceIcon = "fas fa-frown";
+                            }
+                        }
+                        
+                        <span class="badge @performanceBadge fs-3 p-3">
+                            <i class="@performanceIcon"></i> @performanceText
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-alt"></i> Detailed Results
+                        <button class="btn btn-sm btn-outline-light float-end" type="button" data-bs-toggle="collapse" data-bs-target="#detailedResults">
+                            <i class="fas fa-chevron-down"></i> Toggle Details
+                        </button>
+                    </h5>
+                </div>
+                <div class="collapse show" id="detailedResults">
+                    <div class="card-body">
+                        @if (Model.QuestionResults.Any())
+                        {
+                            <div class="accordion" id="questionsAccordion">
+                                @for (int i = 0; i < Model.QuestionResults.Count; i++)
+                                {
+                                    var result = Model.QuestionResults[i];
+                                    var accordionId = $"question{i}";
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="heading@(i)">
+                                            <button class="accordion-button @(i > 0 ? "collapsed" : "")" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#@accordionId">
+                                                <div class="d-flex align-items-center w-100">
+                                                    <div class="me-3">
+                                                        @if (result.IsCorrect)
+                                                        {
+                                                            <i class="fas fa-check-circle text-success fa-lg"></i>
+                                                        }
+                                                        else if (!string.IsNullOrEmpty(result.UserAnswer))
+                                                        {
+                                                            <i class="fas fa-times-circle text-danger fa-lg"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-minus-circle text-warning fa-lg"></i>
+                                                        }
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <span class="fw-bold">Question @(i + 1):</span>
+                                                        @(result.QuestionText.Length > 60 ? result.QuestionText.Substring(0, 60) + "..." : result.QuestionText)
+                                                    </div>
+                                                    <div class="me-3">
+                                                        <span class="badge bg-info">@result.CategoryName</span>
+                                                        <span class="badge bg-@(result.DifficultyLevel == "Easy" ? "success" : result.DifficultyLevel == "Medium" ? "warning" : "danger")">
+                                                            @result.DifficultyLevel
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </h2>
+                                        <div id="@accordionId" class="accordion-collapse collapse @(i == 0 ? "show" : "")" 
+                                             data-bs-parent="#questionsAccordion">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <h6 class="fw-bold">Question:</h6>
+                                                        <p class="mb-3">@result.QuestionText</p>
+                                                        
+                                                        <h6 class="fw-bold">Options:</h6>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="option-result @(result.CorrectAnswer == "Option1" ? "correct-option" : "") @(result.UserAnswer == "Option1" && result.UserAnswer != result.CorrectAnswer ? "wrong-option" : "")">
+                                                                    <span class="option-letter">A</span> @result.Option1
+                                                                    @if (result.UserAnswer == "Option1")
+                                                                    {
+                                                                        <i class="fas fa-arrow-left text-primary ms-2" title="Your Answer"></i>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="option-result @(result.CorrectAnswer == "Option2" ? "correct-option" : "") @(result.UserAnswer == "Option2" && result.UserAnswer != result.CorrectAnswer ? "wrong-option" : "")">
+                                                                    <span class="option-letter">B</span> @result.Option2
+                                                                    @if (result.UserAnswer == "Option2")
+                                                                    {
+                                                                        <i class="fas fa-arrow-left text-primary ms-2" title="Your Answer"></i>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-md-6">
+                                                                <div class="option-result @(result.CorrectAnswer == "Option3" ? "correct-option" : "") @(result.UserAnswer == "Option3" && result.UserAnswer != result.CorrectAnswer ? "wrong-option" : "")">
+                                                                    <span class="option-letter">C</span> @result.Option3
+                                                                    @if (result.UserAnswer == "Option3")
+                                                                    {
+                                                                        <i class="fas fa-arrow-left text-primary ms-2" title="Your Answer"></i>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="option-result @(result.CorrectAnswer == "Option4" ? "correct-option" : "") @(result.UserAnswer == "Option4" && result.UserAnswer != result.CorrectAnswer ? "wrong-option" : "")">
+                                                                    <span class="option-letter">D</span> @result.Option4
+                                                                    @if (result.UserAnswer == "Option4")
+                                                                    {
+                                                                        <i class="fas fa-arrow-left text-primary ms-2" title="Your Answer"></i>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="result-summary p-3 bg-light rounded">
+                                                            <h6><i class="fas fa-info-circle"></i> Summary</h6>
+                                                            <p class="mb-1">
+                                                                <strong>Your Answer:</strong> 
+                                                                @if (!string.IsNullOrEmpty(result.UserAnswer))
+                                                                {
+                                                                    var userOptionLetter = result.UserAnswer switch
+                                                                    {
+                                                                        "Option1" => "A",
+                                                                        "Option2" => "B", 
+                                                                        "Option3" => "C",
+                                                                        "Option4" => "D",
+                                                                        _ => result.UserAnswer
+                                                                    };
+                                                                    <span class="badge bg-primary">Option @userOptionLetter</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge bg-warning">Not Answered</span>
+                                                                }
+                                                            </p>
+                                                            <p class="mb-1">
+                                                                <strong>Correct Answer:</strong>
+                                                                @{
+                                                                    var correctOptionLetter = result.CorrectAnswer switch
+                                                                    {
+                                                                        "Option1" => "A",
+                                                                        "Option2" => "B",
+                                                                        "Option3" => "C", 
+                                                                        "Option4" => "D",
+                                                                        _ => result.CorrectAnswer
+                                                                    };
+                                                                }
+                                                                <span class="badge bg-success">Option @correctOptionLetter</span>
+                                                            </p>
+                                                            <p class="mb-1">
+                                                                <strong>Result:</strong>
+                                                                @if (result.IsCorrect)
+                                                                {
+                                                                    <span class="badge bg-success">Correct</span>
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(result.UserAnswer))
+                                                                {
+                                                                    <span class="badge bg-danger">Incorrect</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge bg-warning">Unanswered</span>
+                                                                }
+                                                            </p>
+                                                            @if (result.TimeTaken.HasValue)
+                                                            {
+                                                                <p class="mb-0">
+                                                                    <strong>Time Taken:</strong> @result.TimeTaken seconds
+                                                                </p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted">
+                                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                                <h5>No detailed results available</h5>
+                                <p>It appears no questions were answered in this quiz session.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4 mb-5">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a asp-action="Setup" class="btn btn-primary btn-lg me-md-3">
+                        <i class="fas fa-redo"></i> Take Another Quiz
+                    </a>
+                    <a asp-action="Dashboard" asp-controller="Users" class="btn btn-secondary btn-lg me-md-3">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <button type="button" class="btn btn-info btn-lg" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+}
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+
+    .result-stat {
+        padding: 20px 0;
+    }
+
+    .stat-icon {
+        margin-bottom: 15px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 10px 0 5px 0;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .progress-item {
+        margin-bottom: 15px;
+    }
+
+    .progress-item label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .option-result {
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        background: #f8f9fa;
+    }
+
+    .option-result.correct-option {
+        background: #d4edda;
+        border-color: #28a745;
+        color: #155724;
+    }
+
+    .option-result.wrong-option {
+        background: #f8d7da;
+        border-color: #dc3545;
+        color: #721c24;
+    }
+
+    .option-letter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 12px;
+        margin-right: 8px;
+    }
+
+    .result-summary {
+        border: 1px solid #dee2e6;
+    }
+
+    .accordion-button {
+        padding: 1rem 1.25rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: #e7f3ff;
+        border-color: #007bff;
+    }
+
+    @@media print {
+        .btn, .accordion-button {
+            display: none !important;
+        }
+        
+        .accordion-collapse {
+            display: block !important;
+        }
+    }
+</style>

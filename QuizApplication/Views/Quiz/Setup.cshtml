@@ -1,0 +1,249 @@
+@model QuizApplication.ViewModels.QuizSetupViewModel
+
+@{
+    ViewData["Title"] = "Quiz Setup";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-play-circle"></i> Quiz Setup
+                    </h4>
+                    <p class="mb-0 small">Configure your quiz preferences</p>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Setup" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <!-- Quiz Title -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <label asp-for="QuizTitle" class="form-label">
+                                    <i class="fas fa-tag text-primary"></i> Quiz Title
+                                </label>
+                                <input asp-for="QuizTitle" class="form-control" placeholder="Enter quiz title (e.g., Math Quiz, Science Test)" />
+                                <span asp-validation-for="QuizTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Configuration -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="NumberOfQuestions" class="form-label">
+                                    <i class="fas fa-question-circle text-info"></i> Number of Questions
+                                </label>
+                                <select asp-for="NumberOfQuestions" class="form-select">
+                                    <option value="5">5 Questions</option>
+                                    <option value="10" selected>10 Questions</option>
+                                    <option value="15">15 Questions</option>
+                                    <option value="20">20 Questions</option>
+                                    <option value="25">25 Questions</option>
+                                    <option value="30">30 Questions</option>
+                                    <option value="50">50 Questions</option>
+                                </select>
+                                <span asp-validation-for="NumberOfQuestions" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="TimeLimit" class="form-label">
+                                    <i class="fas fa-clock text-warning"></i> Time Limit (Minutes)
+                                </label>
+                                <select asp-for="TimeLimit" class="form-select">
+                                    <option value="5">5 Minutes</option>
+                                    <option value="10">10 Minutes</option>
+                                    <option value="15">15 Minutes</option>
+                                    <option value="20">20 Minutes</option>
+                                    <option value="30" selected>30 Minutes</option>
+                                    <option value="45">45 Minutes</option>
+                                    <option value="60">1 Hour</option>
+                                    <option value="90">1.5 Hours</option>
+                                    <option value="120">2 Hours</option>
+                                </select>
+                                <span asp-validation-for="TimeLimit" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="DifficultyLevel" class="form-label">
+                                    <i class="fas fa-signal text-danger"></i> Difficulty Level
+                                </label>
+                                <select asp-for="DifficultyLevel" class="form-select">
+                                    <option value="">All Levels</option>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                                <span asp-validation-for="DifficultyLevel" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Category Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-tags text-success"></i> Select Categories
+                            </label>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                Choose one or more categories for your quiz. Questions will be randomly selected from the chosen categories.
+                            </div>
+                            <span asp-validation-for="SelectedCategoryIds" class="text-danger d-block mb-2"></span>
+                            
+                            @if (Model.AvailableCategories?.Any() == true)
+                            {
+                                <div class="row">
+                                    @foreach (var category in Model.AvailableCategories)
+                                    {
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="card category-card h-100 @(category.IsSelected ? "border-success" : "")">
+                                                <div class="card-body text-center">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input category-checkbox" 
+                                                               type="checkbox" 
+                                                               name="SelectedCategoryIds" 
+                                                               value="@category.CategoryId" 
+                                                               id="category_@category.CategoryId"
+                                                               @(category.IsSelected ? "checked" : "")>
+                                                        <label class="form-check-label w-100" for="category_@category.CategoryId">
+                                                            <i class="fas fa-folder-open fa-2x text-primary mb-2 d-block"></i>
+                                                            <h6 class="card-title">@category.CategoryName</h6>
+                                                            <small class="text-muted">
+                                                                @category.QuestionCount Question@(category.QuestionCount != 1 ? "s" : "") Available
+                                                            </small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    No categories with questions are available. Please contact an administrator to add questions.
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Quiz Preview -->
+                        <div class="card bg-light mb-4" id="quizPreview" style="display: none;">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-eye text-info"></i> Quiz Preview
+                                </h6>
+                                <div id="previewContent">
+                                    <!-- Preview content will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Dashboard" asp-controller="Users" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="button" class="btn btn-info me-md-2" onclick="showPreview()">
+                                <i class="fas fa-eye"></i> Preview Quiz
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Start Quiz
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Category card selection styling
+            $('.category-checkbox').on('change', function() {
+                var card = $(this).closest('.category-card');
+                if (this.checked) {
+                    card.addClass('border-success bg-light');
+                } else {
+                    card.removeClass('border-success bg-light');
+                }
+                updatePreview();
+            });
+
+            // Initial styling for checked categories
+            $('.category-checkbox:checked').each(function() {
+                $(this).closest('.category-card').addClass('border-success bg-light');
+            });
+
+            // Update preview on form changes
+            $('select, input').on('change', updatePreview);
+        });
+
+        function updatePreview() {
+            var selectedCategories = [];
+            $('.category-checkbox:checked').each(function() {
+                var label = $(this).closest('.card-body').find('h6').text();
+                selectedCategories.push(label);
+            });
+
+            if (selectedCategories.length > 0) {
+                var questions = $('#NumberOfQuestions').val();
+                var timeLimit = $('#TimeLimit').val();
+                var difficulty = $('#DifficultyLevel').val() || 'All Levels';
+                var title = $('#QuizTitle').val() || 'Untitled Quiz';
+
+                var previewHtml = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Title:</strong> ${title}<br>
+                            <strong>Questions:</strong> ${questions}<br>
+                            <strong>Time Limit:</strong> ${timeLimit} minutes
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Difficulty:</strong> ${difficulty}<br>
+                            <strong>Categories:</strong> ${selectedCategories.join(', ')}
+                        </div>
+                    </div>
+                `;
+
+                $('#previewContent').html(previewHtml);
+            }
+        }
+
+        function showPreview() {
+            updatePreview();
+            $('#quizPreview').slideToggle();
+        }
+    </script>
+}
+
+<style>
+    .category-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #dee2e6;
+    }
+
+    .category-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .category-card.border-success {
+        border-color: #28a745 !important;
+        background-color: #f8f9fa !important;
+    }
+
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .card-header {
+        border-bottom: 3px solid rgba(255,255,255,0.2);
+    }
+</style>

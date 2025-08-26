@@ -1,0 +1,444 @@
+@model QuizApplication.ViewModels.PracticeQuestionViewModel
+
+@{
+    ViewData["Title"] = "Practice Question";
+}
+
+<div class="container mt-3">
+    <!-- Practice Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-info fs-6">Practice Mode</span>
+                            <span class="badge bg-primary fs-6 ms-2">@Model.CategoryName</span>
+                            <span class="badge bg-@(Model.DifficultyLevel == "Easy" ? "success" : Model.DifficultyLevel == "Medium" ? "warning" : "danger") fs-6 ms-2">@Model.DifficultyLevel</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-infinity text-success"></i> <span class="text-success">No Time Limit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Question Content -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Question Text -->
+                    <div class="mb-4">
+                        <h4 class="question-text">@Model.QuestionText</h4>
+                        
+                        @if (Model.QuestionImageData != null)
+                        {
+                            <div class="text-center mt-3">
+                                <img src="@Url.Action("GetImage", "Practice", new { questionId = Model.QuestionId })" 
+                                     alt="Question Image" 
+                                     class="img-fluid rounded shadow-sm question-image"
+                                     style="max-height: 400px;">
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div class="options-container">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card" data-option="Option1">
+                                    <div class="option-header">
+                                        <span class="option-letter">A</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option1
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card" data-option="Option2">
+                                    <div class="option-header">
+                                        <span class="option-letter">B</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option2
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card" data-option="Option3">
+                                    <div class="option-header">
+                                        <span class="option-letter">C</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option3
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="option-card" data-option="Option4">
+                                    <div class="option-header">
+                                        <span class="option-letter">D</span>
+                                    </div>
+                                    <div class="option-content">
+                                        @Model.Option4
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Answer Result -->
+                    <div class="answer-result mt-4" id="answerResult" style="display: none;">
+                        <div class="alert" id="resultAlert">
+                            <div class="d-flex align-items-center">
+                                <div class="result-icon me-3">
+                                    <i class="fas fa-check-circle fa-2x" id="resultIcon"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1" id="resultTitle">Result</h6>
+                                    <p class="mb-0" id="resultMessage">Answer explanation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='@Url.Action("Setup", "Practice")'">
+                                <i class="fas fa-arrow-left"></i> Back to Setup
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary me-2" id="checkAnswerBtn" disabled>
+                                <i class="fas fa-check"></i> Check Answer
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="nextQuestion()" id="nextQuestionBtn" style="display: none;">
+                                <i class="fas fa-forward"></i> Next Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-dumbbell"></i> Practice Info
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Practice Features -->
+                    <div class="mb-3">
+                        <h6><i class="fas fa-star text-warning"></i> Practice Features</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-check text-success me-2"></i>No time pressure</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Immediate feedback</li>
+                            <li><i class="fas fa-check text-success me-2"></i>See correct answers</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Unlimited questions</li>
+                        </ul>
+                    </div>
+
+                    <!-- Current Question Info -->
+                    <hr>
+                    <div class="text-center">
+                        <div class="mb-2">
+                            <i class="fas fa-tag fa-2x text-primary mb-1"></i>
+                            <h6>@Model.CategoryName</h6>
+                            <small class="text-muted">Category</small>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-signal fa-2x text-@(Model.DifficultyLevel == "Easy" ? "success" : Model.DifficultyLevel == "Medium" ? "warning" : "danger") mb-1"></i>
+                            <h6>@Model.DifficultyLevel</h6>
+                            <small class="text-muted">Difficulty</small>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.location.href='@Url.Action("Setup", "Practice")'">
+                            <i class="fas fa-cog"></i> Change Settings
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="nextQuestion()">
+                            <i class="fas fa-random"></i> Random Question
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='@Url.Action("Dashboard", "Users")'">
+                            <i class="fas fa-home"></i> Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form data -->
+<input type="hidden" id="questionId" value="@Model.QuestionId" />
+<input type="hidden" id="correctAnswer" value="@Model.CorrectAnswer" />
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        let selectedOption = '';
+        let answerChecked = false;
+
+        $(document).ready(function() {
+            // Option selection
+            $('.option-card').on('click', function() {
+                if (!answerChecked) {
+                    selectOption($(this).data('option'));
+                }
+            });
+
+            // Check answer button
+            $('#checkAnswerBtn').on('click', function() {
+                checkAnswer();
+            });
+
+            // Prevent context menu on options
+            $('.option-card').on('contextmenu', function(e) {
+                e.preventDefault();
+            });
+        });
+
+        function selectOption(option) {
+            if (answerChecked) return;
+            
+            $('.option-card').removeClass('selected');
+            $('[data-option="' + option + '"]').addClass('selected');
+            selectedOption = option;
+            
+            $('#checkAnswerBtn').prop('disabled', false);
+        }
+
+        function checkAnswer() {
+            if (!selectedOption || answerChecked) return;
+
+            $.ajax({
+                url: '@Url.Action("CheckAnswer", "Practice")',
+                type: 'POST',
+                data: {
+                    questionId: $('#questionId').val(),
+                    selectedOption: selectedOption,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showResult(response.isCorrect, response.correctAnswer, response.explanation);
+                        answerChecked = true;
+                        
+                        // Disable further option selection
+                        $('.option-card').addClass('disabled');
+                        $('#checkAnswerBtn').hide();
+                        $('#nextQuestionBtn').show();
+                        
+                        // Highlight correct answer
+                        highlightCorrectAnswer(response.correctAnswer);
+                    }
+                },
+                error: function() {
+                    alert('Error checking answer. Please try again.');
+                }
+            });
+        }
+
+        function showResult(isCorrect, correctAnswer, explanation) {
+            const resultAlert = $('#resultAlert');
+            const resultIcon = $('#resultIcon');
+            const resultTitle = $('#resultTitle');
+            const resultMessage = $('#resultMessage');
+            
+            if (isCorrect) {
+                resultAlert.removeClass('alert-danger').addClass('alert-success');
+                resultIcon.removeClass('fa-times-circle text-danger').addClass('fa-check-circle text-success');
+                resultTitle.text('Correct!');
+            } else {
+                resultAlert.removeClass('alert-success').addClass('alert-danger');
+                resultIcon.removeClass('fa-check-circle text-success').addClass('fa-times-circle text-danger');
+                resultTitle.text('Incorrect');
+            }
+            
+            resultMessage.text(explanation);
+            $('#answerResult').slideDown();
+        }
+
+        function highlightCorrectAnswer(correctAnswer) {
+            // Highlight the correct answer
+            $('[data-option="' + correctAnswer + '"]').addClass('correct-answer');
+            
+            // If selected answer was wrong, mark it as wrong
+            if (selectedOption !== correctAnswer) {
+                $('[data-option="' + selectedOption + '"]').addClass('wrong-answer');
+            }
+        }
+
+        function nextQuestion() {
+            window.location.href = '@Url.Action("NextQuestion", "Practice")';
+        }
+    </script>
+}
+
+<style>
+    .option-card {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+    }
+
+    .option-card:hover:not(.disabled) {
+        border-color: #007bff;
+        background: #e3f2fd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .option-card.selected {
+        border-color: #28a745;
+        background: #d4edda;
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .option-card.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .option-card.correct-answer {
+        border-color: #28a745 !important;
+        background: #d4edda !important;
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.5) !important;
+    }
+
+    .option-card.wrong-answer {
+        border-color: #dc3545 !important;
+        background: #f8d7da !important;
+        box-shadow: 0 0 20px rgba(220, 53, 69, 0.5) !important;
+    }
+
+    .option-header {
+        flex: 0 0 40px;
+        margin-right: 15px;
+    }
+
+    .option-letter {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .option-card.selected .option-letter {
+        background: #28a745;
+    }
+
+    .option-card.correct-answer .option-letter {
+        background: #28a745 !important;
+    }
+
+    .option-card.wrong-answer .option-letter {
+        background: #dc3545 !important;
+    }
+
+    .option-content {
+        flex: 1;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .question-text {
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .question-image {
+        border: 3px solid #dee2e6;
+        transition: transform 0.3s ease;
+    }
+
+    .question-image:hover {
+        transform: scale(1.05);
+    }
+
+    .answer-result {
+        animation: slideInUp 0.5s ease;
+    }
+
+    .result-icon {
+        animation: bounceIn 0.8s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes bounceIn {
+        0%, 20%, 40%, 60%, 80%, 100% {
+            animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        }
+
+        0% {
+            opacity: 0;
+            transform: scale3d(.3, .3, .3);
+        }
+
+        20% {
+            transform: scale3d(1.1, 1.1, 1.1);
+        }
+
+        40% {
+            transform: scale3d(.9, .9, .9);
+        }
+
+        60% {
+            opacity: 1;
+            transform: scale3d(1.03, 1.03, 1.03);
+        }
+
+        80% {
+            transform: scale3d(.97, .97, .97);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale3d(1, 1, 1);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .option-card {
+            min-height: 60px;
+            padding: 10px;
+        }
+    }
+</style>

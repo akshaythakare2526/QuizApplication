@@ -1,0 +1,167 @@
+@model QuizApplication.Models.Questions
+
+@{
+    ViewData["Title"] = "Question Details";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-eye"></i> Question Details
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3">Question ID:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.QuestionId)</dd>
+                        
+                        <dt class="col-sm-3">Category:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-info fs-6">@Html.DisplayFor(model => model.Category.CategoryName)</span>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Difficulty:</dt>
+                        <dd class="col-sm-9">
+                            @{
+                                string badgeClass = Model.DifficultyLevel switch
+                                {
+                                    "Easy" => "bg-success",
+                                    "Medium" => "bg-warning",
+                                    "Hard" => "bg-danger",
+                                    _ => "bg-secondary"
+                                };
+                            }
+                            <span class="badge @badgeClass fs-6">@Html.DisplayFor(model => model.DifficultyLevel)</span>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Question Text:</dt>
+                        <dd class="col-sm-9">
+                            <div class="border rounded p-3 bg-light">
+                                @Html.DisplayFor(model => model.QuestionText)
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                
+                <div class="col-md-4">
+                    @if (Model.QuestionImageData != null)
+                    {
+                        <div class="text-center">
+                            <h6>Question Image:</h6>
+                            <img src="@Url.Action("GetImage", "Questions", new { id = Model.QuestionId })" 
+                                 alt="Question Image" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted">
+                            <i class="fas fa-image fa-4x mb-2"></i>
+                            <p>No image attached</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-12">
+                    <h5><i class="fas fa-list"></i> Answer Options</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3 @(Model.CorrectedOption == "Option1" ? "border-success" : "")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2">A</span>
+                                        <span class="flex-grow-1">@Html.DisplayFor(model => model.Option1)</span>
+                                        @if (Model.CorrectedOption == "Option1")
+                                        {
+                                            <i class="fas fa-check-circle text-success ms-2"></i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3 @(Model.CorrectedOption == "Option2" ? "border-success" : "")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2">B</span>
+                                        <span class="flex-grow-1">@Html.DisplayFor(model => model.Option2)</span>
+                                        @if (Model.CorrectedOption == "Option2")
+                                        {
+                                            <i class="fas fa-check-circle text-success ms-2"></i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3 @(Model.CorrectedOption == "Option3" ? "border-success" : "")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2">C</span>
+                                        <span class="flex-grow-1">@Html.DisplayFor(model => model.Option3)</span>
+                                        @if (Model.CorrectedOption == "Option3")
+                                        {
+                                            <i class="fas fa-check-circle text-success ms-2"></i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3 @(Model.CorrectedOption == "Option4" ? "border-success" : "")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2">D</span>
+                                        <span class="flex-grow-1">@Html.DisplayFor(model => model.Option4)</span>
+                                        @if (Model.CorrectedOption == "Option4")
+                                        {
+                                            <i class="fas fa-check-circle text-success ms-2"></i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Correct Answer:</strong>
+                        @{
+                            string correctAnswer = Model.CorrectedOption switch
+                            {
+                                "Option1" => "A - " + Model.Option1,
+                                "Option2" => "B - " + Model.Option2,
+                                "Option3" => "C - " + Model.Option3,
+                                "Option4" => "D - " + Model.Option4,
+                                _ => Model.CorrectedOption
+                            };
+                        }
+                        Option @correctAnswer
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <a asp-action="Index" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model?.QuestionId" class="btn btn-warning me-md-2">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model?.QuestionId" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+}
