@@ -1,0 +1,494 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using QuizApplication.Data;
+using QuizApplication.Models;
+using QuizApplication.ViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace QuizApplication.Controllers
+{
+    public class CustomQuizController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public CustomQuizController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: CustomQuiz/MyQuizzes - View quizzes created by current user
+        public async Task<IActionResult> MyQuizzes()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quizzes = await _context.CustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Category)
+                .Include(q => q.CustomQuizQuestions)
+                .Include(q => q.CustomQuizAssignments)
+                .Where(q => q.CreatedByUserId == userId && q.IsActive)
+                .OrderByDescending(q => q.CreatedDate)
+                .Select(q => new CustomQuizListViewModel
+                {
+                    CustomQuizId = q.CustomQuizId,
+                    Title = q.Title,
+                    Description = q.Description,
+                    CreatedBy = q.CreatedBy!.Username,
+                    CreatedByUserId = q.CreatedByUserId,
+                    CreatedDate = q.CreatedDate,
+                    TimeLimit = q.TimeLimit,
+                    IsPublic = q.IsPublic,
+                    QuestionCount = q.CustomQuizQuestions.Count,
+                    CategoryName = q.Category != null ? q.Category.CategoryName : "All Categories",
+                    DifficultyLevel = q.DifficultyLevel
+                })
+                .ToListAsync();
+
+            return View(quizzes);
+        }
+
+        // GET: CustomQuiz/AssignedQuizzes - View quizzes assigned to current user
+        public async Task<IActionResult> AssignedQuizzes()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quizzes = await _context.CustomQuizAssignments
+                .Include(a => a.CustomQuiz)
+                .ThenInclude(q => q!.CreatedBy)
+                .Include(a => a.CustomQuiz)
+                .ThenInclude(q => q!.Category)
+                .Include(a => a.CustomQuiz)
+                .ThenInclude(q => q!.CustomQuizQuestions)
+                .Where(a => a.AssignedToUserId == userId && a.CustomQuiz!.IsActive)
+                .OrderByDescending(a => a.AssignedDate)
+                .Select(a => new CustomQuizListViewModel
+                {
+                    CustomQuizId = a.CustomQuiz!.CustomQuizId,
+                    Title = a.CustomQuiz.Title,
+                    Description = a.CustomQuiz.Description,
+                    CreatedBy = a.CustomQuiz.CreatedBy!.Username,
+                    CreatedByUserId = a.CustomQuiz.CreatedByUserId,
+                    CreatedDate = a.CustomQuiz.CreatedDate,
+                    TimeLimit = a.CustomQuiz.TimeLimit,
+                    IsPublic = a.CustomQuiz.IsPublic,
+                    QuestionCount = a.CustomQuiz.CustomQuizQuestions.Count,
+                    CategoryName = a.CustomQuiz.Category != null ? a.CustomQuiz.Category.CategoryName : "All Categories",
+                    DifficultyLevel = a.CustomQuiz.DifficultyLevel,
+                    IsAssigned = true,
+                    IsCompleted = a.IsCompleted,
+                    IsViewed = a.IsViewed,
+                    Score = a.Score
+                })
+                .ToListAsync();
+
+            return View(quizzes);
+        }
+
+        // GET: CustomQuiz/PublicQuizzes - View all public quizzes
+        public async Task<IActionResult> PublicQuizzes()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quizzes = await _context.CustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Category)
+                .Include(q => q.CustomQuizQuestions)
+                .Where(q => q.IsPublic && q.IsActive)
+                .OrderByDescending(q => q.CreatedDate)
+                .Select(q => new CustomQuizListViewModel
+                {
+                    CustomQuizId = q.CustomQuizId,
+                    Title = q.Title,
+                    Description = q.Description,
+                    CreatedBy = q.CreatedBy!.Username,
+                    CreatedByUserId = q.CreatedByUserId,
+                    CreatedDate = q.CreatedDate,
+                    TimeLimit = q.TimeLimit,
+                    IsPublic = q.IsPublic,
+                    QuestionCount = q.CustomQuizQuestions.Count,
+                    CategoryName = q.Category != null ? q.Category.CategoryName : "All Categories",
+                    DifficultyLevel = q.DifficultyLevel
+                })
+                .ToListAsync();
+
+            return View(quizzes);
+        }
+
+        // GET: CustomQuiz/Create - Show create quiz form
+        public async Task<IActionResult> Create()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var viewModel = new CreateCustomQuizViewModel
+            {
+                AvailableCategories = await _context.Categories.OrderBy(c => c.CategoryName).ToListAsync()
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: CustomQuiz/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateCustomQuizViewModel model)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var customQuiz = new CustomQuizzes
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    CreatedByUserId = userId.Value,
+                    TimeLimit = model.TimeLimit,
+                    IsPublic = model.IsPublic,
+                    CategoryId = model.CategoryId,
+                    DifficultyLevel = model.DifficultyLevel,
+                    CreatedDate = DateTime.Now,
+                    IsActive = true
+                };
+
+                _context.CustomQuizzes.Add(customQuiz);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Quiz created successfully! Now select questions for your quiz.";
+                return RedirectToAction("SelectQuestions", new { id = customQuiz.CustomQuizId });
+            }
+
+            model.AvailableCategories = await _context.Categories.OrderBy(c => c.CategoryName).ToListAsync();
+            return View(model);
+        }
+
+        // GET: CustomQuiz/SelectQuestions/5
+        public async Task<IActionResult> SelectQuestions(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CustomQuizQuestions)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == id);
+
+            if (quiz == null || quiz.CreatedByUserId != userId)
+            {
+                return NotFound();
+            }
+
+            var selectedQuestionIds = quiz.CustomQuizQuestions.Select(q => q.QuestionId).ToList();
+
+            var availableQuestions = await _context.Questions
+                .Include(q => q.Category)
+                .Where(q => quiz.CategoryId == null || q.CategoryId == quiz.CategoryId)
+                .Select(q => new QuestionSelectionItem
+                {
+                    QuestionId = q.QuestionId,
+                    QuestionText = q.QuestionText,
+                    CategoryName = q.Category!.CategoryName,
+                    DifficultyLevel = q.DifficultyLevel,
+                    IsSelected = selectedQuestionIds.Contains(q.QuestionId)
+                })
+                .ToListAsync();
+
+            var viewModel = new SelectQuestionsViewModel
+            {
+                CustomQuizId = id,
+                QuizTitle = quiz.Title,
+                AvailableQuestions = availableQuestions,
+                SelectedQuestionIds = selectedQuestionIds
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: CustomQuiz/SelectQuestions
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SelectQuestions(SelectQuestionsViewModel model)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CustomQuizQuestions)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == model.CustomQuizId);
+
+            if (quiz == null || quiz.CreatedByUserId != userId)
+            {
+                return NotFound();
+            }
+
+            if (model.SelectedQuestionIds == null || !model.SelectedQuestionIds.Any())
+            {
+                TempData["ErrorMessage"] = "Please select at least one question for your quiz.";
+                return RedirectToAction("SelectQuestions", new { id = model.CustomQuizId });
+            }
+
+            // Remove existing questions
+            _context.CustomQuizQuestions.RemoveRange(quiz.CustomQuizQuestions);
+
+            // Add selected questions
+            var order = 1;
+            foreach (var questionId in model.SelectedQuestionIds)
+            {
+                _context.CustomQuizQuestions.Add(new CustomQuizQuestions
+                {
+                    CustomQuizId = model.CustomQuizId,
+                    QuestionId = questionId,
+                    QuestionOrder = order++
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Successfully added {model.SelectedQuestionIds.Count} questions to your quiz!";
+            return RedirectToAction("Details", new { id = model.CustomQuizId });
+        }
+
+        // GET: CustomQuiz/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Category)
+                .Include(q => q.CustomQuizQuestions)
+                .Include(q => q.CustomQuizAssignments)
+                .ThenInclude(a => a.AssignedToUser)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == id);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new CustomQuizDetailsViewModel
+            {
+                CustomQuizId = quiz.CustomQuizId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                CreatedBy = quiz.CreatedBy!.Username,
+                CreatedDate = quiz.CreatedDate,
+                TimeLimit = quiz.TimeLimit,
+                IsPublic = quiz.IsPublic,
+                CategoryName = quiz.Category != null ? quiz.Category.CategoryName : "All Categories",
+                DifficultyLevel = quiz.DifficultyLevel,
+                QuestionCount = quiz.CustomQuizQuestions.Count,
+                AssignedUsers = quiz.CustomQuizAssignments.Select(a => new AssignedUserInfo
+                {
+                    Username = a.AssignedToUser!.Username,
+                    AssignedDate = a.AssignedDate,
+                    IsCompleted = a.IsCompleted,
+                    CompletedDate = a.CompletedDate,
+                    Score = a.Score
+                }).ToList(),
+                CanEdit = quiz.CreatedByUserId == userId || userRole == "Admin",
+                CanTake = quiz.IsPublic || quiz.CustomQuizAssignments.Any(a => a.AssignedToUserId == userId)
+            };
+
+            return View(viewModel);
+        }
+
+        // GET: CustomQuiz/AssignUsers/5
+        public async Task<IActionResult> AssignUsers(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CustomQuizAssignments)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == id);
+
+            if (quiz == null || quiz.CreatedByUserId != userId)
+            {
+                return NotFound();
+            }
+
+            var assignedUserIds = quiz.CustomQuizAssignments.Select(a => a.AssignedToUserId).ToList();
+
+            var availableUsers = await _context.Users
+                .Where(u => u.Id != userId && u.Role == "User")
+                .Select(u => new UserSelectionItem
+                {
+                    UserId = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    IsSelected = assignedUserIds.Contains(u.Id)
+                })
+                .ToListAsync();
+
+            var viewModel = new AssignQuizViewModel
+            {
+                CustomQuizId = id,
+                QuizTitle = quiz.Title,
+                AvailableUsers = availableUsers,
+                SelectedUserIds = assignedUserIds
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: CustomQuiz/AssignUsers
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignUsers(AssignQuizViewModel model)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CustomQuizAssignments)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == model.CustomQuizId);
+
+            if (quiz == null || quiz.CreatedByUserId != userId)
+            {
+                return NotFound();
+            }
+
+            if (model.SelectedUserIds != null && model.SelectedUserIds.Any())
+            {
+                // Get existing assignments
+                var existingAssignments = quiz.CustomQuizAssignments.Select(a => a.AssignedToUserId).ToList();
+
+                // Add new assignments
+                foreach (var selectedUserId in model.SelectedUserIds)
+                {
+                    if (!existingAssignments.Contains(selectedUserId))
+                    {
+                        _context.CustomQuizAssignments.Add(new CustomQuizAssignments
+                        {
+                            CustomQuizId = model.CustomQuizId,
+                            AssignedToUserId = selectedUserId,
+                            AssignedDate = DateTime.Now,
+                            IsCompleted = false,
+                            IsViewed = false
+                        });
+                    }
+                }
+
+                // Remove unselected assignments (that are not completed)
+                var toRemove = quiz.CustomQuizAssignments
+                    .Where(a => !model.SelectedUserIds.Contains(a.AssignedToUserId) && !a.IsCompleted)
+                    .ToList();
+                _context.CustomQuizAssignments.RemoveRange(toRemove);
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Quiz assignments updated successfully!";
+            }
+
+            return RedirectToAction("Details", new { id = model.CustomQuizId });
+        }
+
+        // GET: CustomQuiz/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Category)
+                .Include(q => q.CustomQuizQuestions)
+                .FirstOrDefaultAsync(q => q.CustomQuizId == id);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
+            }
+
+            var viewModel = new CustomQuizDetailsViewModel
+            {
+                CustomQuizId = quiz.CustomQuizId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                CreatedBy = quiz.CreatedBy!.Username,
+                CreatedDate = quiz.CreatedDate,
+                TimeLimit = quiz.TimeLimit,
+                QuestionCount = quiz.CustomQuizQuestions.Count,
+                CategoryName = quiz.Category != null ? quiz.Category.CategoryName : "All Categories"
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: CustomQuiz/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.CustomQuizzes.FindAsync(id);
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
+            }
+
+            // Soft delete
+            quiz.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Quiz deleted successfully!";
+            return RedirectToAction("MyQuizzes");
+        }
+    }
+}

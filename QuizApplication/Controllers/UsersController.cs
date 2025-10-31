@@ -142,6 +142,25 @@ namespace QuizApplication.Controllers
                 ViewBag.MyAnswers = await _context.UserAnswers.CountAsync(ua => userSessionIds.Contains(ua.SessionId));
                 ViewBag.AvailableCategories = await _context.Categories.CountAsync();
                 
+                // Custom Quiz Notifications
+                var newCustomQuizzes = await _context.UserCustomQuizAssignments
+                    .Include(a => a.UserQuiz)
+                    .ThenInclude(q => q!.CreatedBy)
+                    .Include(a => a.UserQuiz)
+                    .ThenInclude(q => q!.Questions)
+                    .Where(a => a.AssignedToUserId == userId && !a.IsViewed)
+                    .OrderByDescending(a => a.AssignedDate)
+                    .Take(5)
+                    .ToListAsync();
+                ViewBag.NewCustomQuizzes = newCustomQuizzes;
+                ViewBag.NewCustomQuizCount = newCustomQuizzes.Count;
+                
+                // Total custom quizzes assigned
+                ViewBag.TotalAssignedQuizzes = await _context.UserCustomQuizAssignments
+                    .CountAsync(a => a.AssignedToUserId == userId);
+                ViewBag.PendingCustomQuizzes = await _context.UserCustomQuizAssignments
+                    .CountAsync(a => a.AssignedToUserId == userId && !a.IsCompleted);
+                
                 return View("UserDashboard");
             }
         }

@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="~/QuizApplication.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body>
+<body class="app-body">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-gradient-custom border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Users" asp-action="Dashboard">Quiz Application</a>
+                <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-graduation-cap me-2"></i>Quiz Master
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -25,25 +27,27 @@
                         {
                             var userRole = Context.Session.GetString("UserRole");
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Dashboard">
+                                <a class="nav-link text-white" asp-controller="Users" asp-action="Dashboard">
                                     <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                                 </a>
                             </li>
                             @if (userRole == "Admin")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Manage">
+                                    <a class="nav-link text-white" asp-controller="Users" asp-action="Manage">
                                         <i class="fas fa-users-cog me-1"></i>Manage Users
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
                                         <i class="fas fa-cog me-1"></i>Admin
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="@Url.Action("Create", "Users")"><i class="fas fa-user-plus me-2"></i>Add User</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Index", "Categories")"><i class="fas fa-tags me-2"></i>Categories</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Index", "Questions")"><i class="fas fa-question me-2"></i>Questions</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("MyQuizzes", "CustomQuiz")"><i class="fas fa-clipboard-list me-2"></i>Custom Quizzes</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i>Reports</a></li>
                                     </ul>
@@ -52,18 +56,25 @@
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Quiz" asp-action="Setup">
+                                    <a class="nav-link text-white" asp-controller="Quiz" asp-action="Setup">
                                         <i class="fas fa-play me-1"></i>Take Quiz
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="QuizHistory">
-                                        <i class="fas fa-history me-1"></i>My History
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" id="customQuizDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-clipboard-list me-1"></i>Custom Quizzes
                                     </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Create", "CustomQuiz")"><i class="fas fa-plus-circle me-2"></i>Create Quiz</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("MyQuizzes", "CustomQuiz")"><i class="fas fa-list-alt me-2"></i>My Quizzes</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("AssignedQuizzes", "CustomQuiz")"><i class="fas fa-inbox me-2"></i>Assigned to Me</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("PublicQuizzes", "CustomQuiz")"><i class="fas fa-globe me-2"></i>Public Quizzes</a></li>
+                                    </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" href="#">
-                                        <i class="fas fa-th-large me-1"></i>Categories
+                                    <a class="nav-link text-white" asp-controller="Users" asp-action="QuizHistory">
+                                        <i class="fas fa-history me-1"></i>My History
                                     </a>
                                 </li>
                             }
@@ -71,12 +82,12 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">
+                                <a class="nav-link text-white" asp-controller="Users" asp-action="Index">
                                     <i class="fas fa-sign-in-alt me-1"></i>Login
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Register">
+                                <a class="nav-link text-white" asp-controller="Users" asp-action="Register">
                                     <i class="fas fa-user-plus me-1"></i>Register
                                 </a>
                             </li>
@@ -87,11 +98,11 @@
                         {
                             var userRole = Context.Session.GetString("UserRole");
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                     <i class="fas fa-user me-1"></i>@Context.Session.GetString("Username")
                                     @if (userRole == "Admin")
                                     {
-                                        <span class="badge bg-danger ms-1">Admin</span>
+                                        <span class="badge bg-warning text-dark ms-1">Admin</span>
                                     }
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -111,15 +122,20 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="content-wrapper">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - QuizApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer-custom text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-1">&copy; @DateTime.Now.Year Quiz Master. All rights reserved.</p>
+            <p class="mb-0 text-white-50">
+                <i class="fas fa-heart text-danger"></i> Made with passion for learning
+            </p>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,0 +1,70 @@
+@model List<QuizApplication.Models.UserCustomQuiz>
+@{
+    ViewData["Title"] = "Public Quizzes";
+}
+
+<div class="mb-4">
+    <h2 class="mb-4">
+        <i class="fas fa-globe me-2"></i>Public Quizzes - Available to Everyone
+    </h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var quiz in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-globe-americas me-2"></i>@quiz.Title
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(quiz.Description))
+                            {
+                                <p class="card-text text-muted">@quiz.Description</p>
+                            }
+                            
+                            <div class="quiz-info mt-3">
+                                <div class="mb-2">
+                                    <i class="fas fa-user text-secondary me-2"></i>
+                                    Created by: <strong>@quiz.CreatedBy.Username</strong>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-question-circle text-primary me-2"></i>
+                                    <strong>@quiz.Questions.Count</strong> questions
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-clock text-warning me-2"></i>
+                                    <strong>@quiz.TimeLimit</strong> minutes
+                                </div>
+                                <div class="mb-2 text-muted">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <small>Created: @quiz.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-grid gap-2">
+                                <a asp-action="Details" asp-route-id="@quiz.UserQuizId" class="btn btn-info">
+                                    <i class="fas fa-eye me-2"></i>View Quiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            No public quizzes are currently available. Create your own quiz and make it public!
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create Your First Quiz
+        </a>
+    }
+</div>

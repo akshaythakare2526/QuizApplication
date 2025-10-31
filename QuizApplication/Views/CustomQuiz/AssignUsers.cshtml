@@ -1,0 +1,129 @@
+@model QuizApplication.ViewModels.AssignQuizViewModel
+@{
+    ViewData["Title"] = "Assign Quiz to Users";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-user-plus me-2"></i>Assign "@Model.QuizTitle" to Users</h2>
+    <p class="text-muted">Select users who should be able to take this quiz</p>
+</div>
+
+<form asp-action="AssignUsers" method="post">
+    <input type="hidden" asp-for="CustomQuizId" />
+    <input type="hidden" asp-for="QuizTitle" />
+    
+    <div class="card shadow-sm mb-3">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-users me-2"></i>Available Users</span>
+            <span class="badge bg-light text-dark" id="selectedCount">0 selected</span>
+        </div>
+        <div class="card-body">
+            @if (Model.AvailableUsers == null || !Model.AvailableUsers.Any())
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No users available for assignment.
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="selectAll()">
+                        <i class="fas fa-check-double me-1"></i>Select All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAll()">
+                        <i class="fas fa-times me-1"></i>Deselect All
+                    </button>
+                </div>
+                
+                <div class="row">
+                    @for (int i = 0; i < Model.AvailableUsers.Count; i++)
+                    {
+                        var user = Model.AvailableUsers[i];
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card user-card h-100">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input user-checkbox" 
+                                               type="checkbox" 
+                                               name="SelectedUserIds" 
+                                               value="@user.UserId" 
+                                               id="user_@user.UserId"
+                                               @(user.IsSelected ? "checked" : "") />
+                                        <label class="form-check-label w-100" for="user_@user.UserId">
+                                            <div class="d-flex align-items-center">
+                                                <div class="user-avatar me-3">
+                                                    <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0">@user.Username</h6>
+                                                    <small class="text-muted">@user.Email</small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Note:</strong> Users will receive a notification when assigned to this quiz. They can view it in their dashboard.
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+        <a asp-action="Details" asp-route-id="@Model.CustomQuizId" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Details
+        </a>
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Save Assignments
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function updateCount() {
+            const checked = document.querySelectorAll('.user-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = checked + ' selected';
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = true);
+            updateCount();
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = false);
+            updateCount();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.user-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateCount);
+            });
+            updateCount();
+        });
+    </script>
+
+    <style>
+        .user-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+}

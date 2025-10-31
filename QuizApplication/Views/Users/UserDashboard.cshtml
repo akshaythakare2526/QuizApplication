@@ -85,6 +85,93 @@
         </div>
     </div>
 
+    <!-- Custom Quiz Notifications -->
+    @if (ViewBag.NewCustomQuizCount != null && ViewBag.NewCustomQuizCount > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-bell fa-shake me-2"></i>
+                        <strong>New Custom Quiz@(ViewBag.NewCustomQuizCount > 1 ? "zes" : "") Assigned!</strong>
+                    </h5>
+                    <p class="mb-3">You have @ViewBag.NewCustomQuizCount new custom quiz@(ViewBag.NewCustomQuizCount > 1 ? "zes" : "") assigned to you.</p>
+                    
+                    <div class="row g-2">
+                        @foreach (var assignment in ViewBag.NewCustomQuizzes)
+                        {
+                            <div class="col-md-6">
+                                <div class="card border-warning">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2">
+                                            <i class="fas fa-clipboard-list me-1 text-warning"></i>
+                                            @assignment.UserQuiz.Title
+                                        </h6>
+                                        <p class="card-text small text-muted mb-2">
+                                            <i class="fas fa-user me-1"></i>From: <strong>@assignment.UserQuiz.CreatedBy.Username</strong><br/>
+                                            <i class="fas fa-clock me-1"></i>Time: @assignment.UserQuiz.TimeLimit minutes<br/>
+                                            <i class="fas fa-question-circle me-1"></i>Questions: @assignment.UserQuiz.Questions.Count<br/>
+                                            <i class="fas fa-calendar me-1"></i>Assigned: @assignment.AssignedDate.ToString("MMM dd, yyyy")
+                                        </p>
+                                        <a href="@Url.Action("Details", "CustomQuiz", new { id = assignment.UserQuizId })" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-play me-1"></i>View Quiz
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <hr>
+                    <div class="mb-0">
+                        <a href="@Url.Action("AssignedQuizzes", "CustomQuiz")" class="btn btn-warning btn-sm">
+                            <i class="fas fa-inbox me-2"></i>View All Assigned Quizzes
+                        </a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Custom Quiz Stats Row -->
+    @if (ViewBag.TotalAssignedQuizzes != null && ViewBag.TotalAssignedQuizzes > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Custom Quizzes Assigned</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.TotalAssignedQuizzes</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pending Custom Quizzes</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PendingCustomQuizzes</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="row">
         <!-- Main Actions Panel -->
         <div class="col-lg-8">
@@ -293,6 +380,9 @@
     .border-left-warning {
         border-left: 0.25rem solid #f6c23e !important;
     }
+    .border-left-danger {
+        border-left: 0.25rem solid #e74a3b !important;
+    }
     .bg-gradient-primary {
         background: linear-gradient(45deg, #007bff, #0056b3);
     }
@@ -319,5 +409,13 @@
     }
     .border-right {
         border-right: 1px solid #e3e6f0 !important;
+    }
+    .fa-shake {
+        animation: shake 0.5s ease-in-out infinite;
+    }
+    @@keyframes shake {
+        0%, 100% { transform: rotate(0deg); }
+        10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+        20%, 40%, 60%, 80% { transform: rotate(10deg); }
     }
 </style>

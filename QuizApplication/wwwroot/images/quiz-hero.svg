@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <!-- Background Circle -->
+  <circle cx="250" cy="250" r="240" fill="#f0f4ff" opacity="0.5"/>
+  
+  <!-- Main Quiz Paper -->
+  <rect x="120" y="100" width="260" height="320" rx="10" fill="#ffffff" stroke="#667eea" stroke-width="3"/>
+  
+  <!-- Header -->
+  <rect x="140" y="120" width="220" height="40" rx="5" fill="#667eea"/>
+  <text x="250" y="145" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">QUIZ</text>
+  
+  <!-- Questions -->
+  <g id="question1">
+    <circle cx="145" cy="195" r="8" fill="#764ba2"/>
+    <rect x="165" y="188" width="180" height="14" rx="7" fill="#e0e7ff"/>
+  </g>
+  
+  <g id="question2">
+    <circle cx="145" cy="230" r="8" fill="#764ba2"/>
+    <rect x="165" y="223" width="140" height="14" rx="7" fill="#e0e7ff"/>
+  </g>
+  
+  <g id="question3">
+    <circle cx="145" cy="265" r="8" fill="#764ba2"/>
+    <rect x="165" y="258" width="160" height="14" rx="7" fill="#e0e7ff"/>
+  </g>
+  
+  <g id="question4">
+    <circle cx="145" cy="300" r="8" fill="#764ba2"/>
+    <rect x="165" y="293" width="150" height="14" rx="7" fill="#e0e7ff"/>
+  </g>
+  
+  <!-- Checkmarks -->
+  <path d="M 140 195 L 143 198 L 149 192" stroke="#28a745" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 140 230 L 143 233 L 149 227" stroke="#28a745" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Button -->
+  <rect x="140" y="350" width="220" height="45" rx="22.5" fill="#28a745"/>
+  <text x="250" y="378" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">START QUIZ</text>
+  
+  <!-- Decorative Stars -->
+  <g id="star1" transform="translate(80, 150)">
+    <path d="M 0,-15 L 4,-5 L 15,-3 L 6,3 L 8,14 L 0,8 L -8,14 L -6,3 L -15,-3 L -4,-5 Z" fill="#ffc107"/>
+  </g>
+  
+  <g id="star2" transform="translate(420, 180)">
+    <path d="M 0,-12 L 3,-4 L 12,-2 L 5,2 L 6,11 L 0,6 L -6,11 L -5,2 L -12,-2 L -3,-4 Z" fill="#ffc107"/>
+  </g>
+  
+  <g id="star3" transform="translate(100, 350)">
+    <path d="M 0,-10 L 2.5,-3 L 10,-2 L 4,2 L 5,9 L 0,5 L -5,9 L -4,2 L -10,-2 L -2.5,-3 Z" fill="#ffc107"/>
+  </g>
+  
+  <!-- Pencil -->
+  <g id="pencil" transform="translate(400, 320) rotate(45)">
+    <rect x="-5" y="-40" width="10" height="60" rx="2" fill="#ff9800"/>
+    <polygon points="-5,20 5,20 0,30" fill="#795548"/>
+    <rect x="-5" y="-45" width="10" height="8" fill="#212121"/>
+  </g>
+  
+  <!-- Trophy Icon -->
+  <g id="trophy" transform="translate(90, 90)">
+    <ellipse cx="0" cy="-5" rx="12" ry="8" fill="#ffc107"/>
+    <rect x="-8" y="-15" width="16" height="12" rx="3" fill="#ffc107"/>
+    <rect x="-3" y="5" width="6" height="8" fill="#ff9800"/>
+    <rect x="-10" y="13" width="20" height="4" rx="2" fill="#ff9800"/>
+    <circle cx="-10" cy="-10" r="4" fill="#f5576c"/>
+    <circle cx="10" cy="-10" r="4" fill="#f5576c"/>
+  </g>
+</svg>

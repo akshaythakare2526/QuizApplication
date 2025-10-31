@@ -1,0 +1,249 @@
+@model QuizApplication.ViewModels.CustomQuizDetailsViewModel
+@{
+    ViewData["Title"] = "Quiz Details";
+}
+
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h2><i class="fas fa-clipboard-list me-2"></i>@Model.Title</h2>
+            <p class="text-muted mb-0">Created by <strong>@Model.CreatedBy</strong> on @Model.CreatedDate.ToString("MMM dd, yyyy")</p>
+        </div>
+        <div>
+            @if (Model.IsPublic)
+            {
+                <span class="badge bg-success fs-6"><i class="fas fa-globe me-1"></i>Public</span>
+            }
+            else
+            {
+                <span class="badge bg-warning text-dark fs-6"><i class="fas fa-lock me-1"></i>Private</span>
+            }
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Quiz Information -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quiz Information</h5>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mb-3">
+                        <h6 class="text-muted">Description</h6>
+                        <p>@Model.Description</p>
+                    </div>
+                }
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="info-item">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <strong>Time Limit:</strong> @Model.TimeLimit minutes
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-item">
+                            <i class="fas fa-question-circle text-primary me-2"></i>
+                            <strong>Questions:</strong> @Model.QuestionCount
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-item">
+                            <i class="fas fa-tag text-info me-2"></i>
+                            <strong>Category:</strong> @Model.CategoryName
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.DifficultyLevel))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="info-item">
+                                <i class="fas fa-signal text-success me-2"></i>
+                                <strong>Difficulty:</strong> @Model.DifficultyLevel
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Assigned Users -->
+        @if (Model.AssignedUsers.Any())
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Assigned Users (@Model.AssignedUsers.Count)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Assigned Date</th>
+                                    <th>Status</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.AssignedUsers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <i class="fas fa-user-circle me-2 text-primary"></i>
+                                            @user.Username
+                                        </td>
+                                        <td>@user.AssignedDate.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            @if (user.IsCompleted)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check me-1"></i>Completed
+                                                </span>
+                                                @if (user.CompletedDate.HasValue)
+                                                {
+                                                    <br/><small class="text-muted">@user.CompletedDate.Value.ToString("MMM dd, yyyy")</small>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-hourglass-half me-1"></i>Pending
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.Score.HasValue)
+                                            {
+                                                <strong class="text-success">@user.Score</strong>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Actions -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    @if (Model.CanTake)
+                    {
+                        <a asp-controller="Quiz" asp-action="Start" asp-route-customQuizId="@Model.CustomQuizId" class="btn btn-success">
+                            <i class="fas fa-play me-2"></i>Take This Quiz
+                        </a>
+                    }
+                    
+                    @if (Model.CanEdit)
+                    {
+                        <a asp-action="SelectQuestions" asp-route-id="@Model.CustomQuizId" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Questions
+                        </a>
+                        <a asp-action="AssignUsers" asp-route-id="@Model.CustomQuizId" class="btn btn-info">
+                            <i class="fas fa-user-plus me-2"></i>Assign to Users
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.CustomQuizId" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Delete Quiz
+                        </a>
+                    }
+                    
+                    <a asp-action="MyQuizzes" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to My Quizzes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="stat-item mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Total Assigned</span>
+                        <strong class="fs-4">@Model.AssignedUsers.Count</strong>
+                    </div>
+                </div>
+                <div class="stat-item mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Completed</span>
+                        <strong class="fs-4 text-success">@Model.AssignedUsers.Count(u => u.IsCompleted)</strong>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Pending</span>
+                        <strong class="fs-4 text-warning">@Model.AssignedUsers.Count(u => !u.IsCompleted)</strong>
+                    </div>
+                </div>
+                
+                @if (Model.AssignedUsers.Any())
+                {
+                    <hr>
+                    <div class="text-center">
+                        <small class="text-muted">Completion Rate</small>
+                        <div class="progress mt-2" style="height: 25px;">
+                            @{
+                                var completionRate = Model.AssignedUsers.Count > 0 
+                                    ? (Model.AssignedUsers.Count(u => u.IsCompleted) * 100 / Model.AssignedUsers.Count) 
+                                    : 0;
+                            }
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @completionRate%" 
+                                 aria-valuenow="@completionRate" aria-valuemin="0" aria-valuemax="100">
+                                @completionRate%
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-item {
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+    }
+    .stat-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>

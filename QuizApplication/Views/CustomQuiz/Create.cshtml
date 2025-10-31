@@ -1,0 +1,70 @@
+@model QuizApplication.Models.UserCustomQuiz
+@{
+    ViewData["Title"] = "Create Custom Quiz";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Create Your Custom Quiz
+                </h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-bold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter an engaging quiz title" required />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-bold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe what this quiz is about..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TimeLimit" class="form-label fw-bold"></label>
+                            <input asp-for="TimeLimit" type="number" class="form-control" min="1" max="180" value="30" required />
+                            <span asp-validation-for="TimeLimit" class="text-danger"></span>
+                            <small class="form-text text-muted">Between 1 and 180 minutes</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3 d-flex align-items-center">
+                            <div class="form-check form-switch mt-4">
+                                <input asp-for="IsPublic" class="form-check-input" type="checkbox" id="isPublicSwitch" />
+                                <label class="form-check-label fw-bold" for="isPublicSwitch">
+                                    <i class="fas fa-globe me-1"></i>Make Public
+                                </label>
+                                <div class="form-text">When public, anyone can take this quiz</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Next Step:</strong> After creating the quiz, you'll add your own questions with options and answers.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="MyQuizzes" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-arrow-right me-2"></i>Create & Add Questions
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,132 @@
+@model QuizApplication.ViewModels.SelectQuestionsViewModel
+@{
+    ViewData["Title"] = "Select Questions";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-tasks me-2"></i>Select Questions for "@Model.QuizTitle"</h2>
+    <p class="text-muted">Choose questions from the list below to include in your quiz</p>
+</div>
+
+<form asp-action="SelectQuestions" method="post">
+    <input type="hidden" asp-for="CustomQuizId" />
+    <input type="hidden" asp-for="QuizTitle" />
+    
+    <div class="card shadow-sm mb-3">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-list me-2"></i>Available Questions</span>
+            <span class="badge bg-light text-dark" id="selectedCount">0 selected</span>
+        </div>
+        <div class="card-body">
+            @if (Model.AvailableQuestions == null || !Model.AvailableQuestions.Any())
+            {
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No questions available. Please add questions to the system first.
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="selectAll()">
+                        <i class="fas fa-check-double me-1"></i>Select All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAll()">
+                        <i class="fas fa-times me-1"></i>Deselect All
+                    </button>
+                </div>
+                
+                <div class="question-list">
+                    @for (int i = 0; i < Model.AvailableQuestions.Count; i++)
+                    {
+                        var question = Model.AvailableQuestions[i];
+                        <div class="card mb-2 question-card">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input question-checkbox" 
+                                           type="checkbox" 
+                                           name="SelectedQuestionIds" 
+                                           value="@question.QuestionId" 
+                                           id="question_@question.QuestionId"
+                                           @(question.IsSelected ? "checked" : "") />
+                                    <label class="form-check-label w-100" for="question_@question.QuestionId">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <strong>Q@(i + 1):</strong> @question.QuestionText
+                                            </div>
+                                            <div class="text-end ms-3">
+                                                <span class="badge bg-info">@question.CategoryName</span>
+                                                @if (!string.IsNullOrEmpty(question.DifficultyLevel))
+                                                {
+                                                    <span class="badge bg-secondary">@question.DifficultyLevel</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+        <a asp-action="MyQuizzes" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to My Quizzes
+        </a>
+        <button type="submit" class="btn btn-success" id="saveBtn">
+            <i class="fas fa-save me-2"></i>Save Questions
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function updateCount() {
+            const checked = document.querySelectorAll('.question-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = checked + ' selected';
+            
+            const saveBtn = document.getElementById('saveBtn');
+            if (checked === 0) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Select at least one question';
+            } else {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save ' + checked + ' Question(s)';
+            }
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = true);
+            updateCount();
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = false);
+            updateCount();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.question-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateCount);
+            });
+            updateCount();
+        });
+    </script>
+
+    <style>
+        .question-card {
+            transition: all 0.2s ease;
+        }
+        .question-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .question-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+}

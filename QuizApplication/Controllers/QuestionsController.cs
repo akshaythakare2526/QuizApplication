@@ -88,7 +88,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> Create()
         {
             var redirectResult = RedirectIfNotAuthenticated();
-            if (redirectResult != null) return redirectResult;
+            if (redirectResult != null) return redirectResult;   
 
             if (!IsUserAdmin())
             {

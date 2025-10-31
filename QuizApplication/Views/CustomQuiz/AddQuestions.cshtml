@@ -1,0 +1,175 @@
+@model List<QuizApplication.Models.UserCustomQuizQuestion>
+@{
+    ViewData["Title"] = "Add Questions";
+    var quizId = ViewBag.QuizId;
+    var quizTitle = ViewBag.QuizTitle;
+    var questionCount = ViewBag.QuestionCount;
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>Add Questions to: @quizTitle
+                </h3>
+                <p class="mb-0"><small>Total Questions: @questionCount</small></p>
+            </div>
+            <div class="card-body">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <!-- Add New Question Form -->
+                <div class="card mb-4 border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Question</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddQuestion" method="post">
+                            <input type="hidden" name="quizId" value="@quizId" />
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Question Text <span class="text-danger">*</span></label>
+                                <textarea name="QuestionText" class="form-control" rows="3" placeholder="Enter your question here..." required></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Option 1 <span class="text-danger">*</span></label>
+                                    <input type="text" name="Option1" class="form-control" placeholder="First option" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Option 2 <span class="text-danger">*</span></label>
+                                    <input type="text" name="Option2" class="form-control" placeholder="Second option" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Option 3 <span class="text-danger">*</span></label>
+                                    <input type="text" name="Option3" class="form-control" placeholder="Third option" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Option 4 <span class="text-danger">*</span></label>
+                                    <input type="text" name="Option4" class="form-control" placeholder="Fourth option" required />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Correct Answer <span class="text-danger">*</span></label>
+                                <select name="CorrectAnswer" class="form-select" required>
+                                    <option value="">-- Select the correct option --</option>
+                                    <option value="Option1">Option 1</option>
+                                    <option value="Option2">Option 2</option>
+                                    <option value="Option3">Option 3</option>
+                                    <option value="Option4">Option 4</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus-circle me-2"></i>Add Question
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Existing Questions List -->
+                @if (Model != null && Model.Any())
+                {
+                    <h5 class="mb-3"><i class="fas fa-list me-2"></i>Existing Questions (@questionCount)</h5>
+                    @foreach (var question in Model)
+                    {
+                        <div class="card mb-3 border-primary">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>Question #@question.QuestionOrder</strong>
+                                    <form asp-action="DeleteQuestion" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this question?');">
+                                        <input type="hidden" name="id" value="@question.QuestionId" />
+                                        <input type="hidden" name="quizId" value="@quizId" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="fw-bold">@question.QuestionText</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" disabled @(question.CorrectAnswer == "Option1" ? "checked" : "")>
+                                            <label class="form-check-label @(question.CorrectAnswer == "Option1" ? "text-success fw-bold" : "")">
+                                                A. @question.Option1 @(question.CorrectAnswer == "Option1" ? "✓" : "")
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" disabled @(question.CorrectAnswer == "Option2" ? "checked" : "")>
+                                            <label class="form-check-label @(question.CorrectAnswer == "Option2" ? "text-success fw-bold" : "")">
+                                                B. @question.Option2 @(question.CorrectAnswer == "Option2" ? "✓" : "")
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" disabled @(question.CorrectAnswer == "Option3" ? "checked" : "")>
+                                            <label class="form-check-label @(question.CorrectAnswer == "Option3" ? "text-success fw-bold" : "")">
+                                                C. @question.Option3 @(question.CorrectAnswer == "Option3" ? "✓" : "")
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" disabled @(question.CorrectAnswer == "Option4" ? "checked" : "")>
+                                            <label class="form-check-label @(question.CorrectAnswer == "Option4" ? "text-success fw-bold" : "")">
+                                                D. @question.Option4 @(question.CorrectAnswer == "Option4" ? "✓" : "")
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        No questions added yet. Please add at least one question to your quiz.
+                    </div>
+                }
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                    <a asp-action="MyQuizzes" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to My Quizzes
+                    </a>
+                    @if (questionCount > 0)
+                    {
+                        <div>
+                            <a asp-action="Details" asp-route-id="@quizId" class="btn btn-info me-2">
+                                <i class="fas fa-eye me-2"></i>View Quiz
+                            </a>
+                            <a asp-action="AssignUsers" asp-route-id="@quizId" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Assign to Users
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
