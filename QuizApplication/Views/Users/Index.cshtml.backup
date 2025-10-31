@@ -54,8 +54,8 @@
                                 <div class="element element-4">🎯</div>
                             </div>
                         </div>
-                        <h3 class="text-dark fw-bold text-center mt-4">Join the Ultimate Quiz Challenge!</h3>
-                        <p class="text-dark text-center fw-semibold">Compete with players worldwide and prove your knowledge!</p>
+                        <h3 class="text-white text-center mt-4">Join the Ultimate Quiz Challenge!</h3>
+                        <p class="text-white-50 text-center">Compete with players worldwide and prove your knowledge!</p>
                     </div>
                 </div>
             </div>
@@ -159,7 +159,7 @@
                     
                     <!-- Register Link -->
                     <div class="text-center mt-4">
-                        <p class="text-dark fw-bold mb-3">New Player?</p>
+                        <p class="text-white mb-3">✨ New Player? Join the Adventure! ✨</p>
                         <a href="@Url.Action("Register", "Users")" class="btn-game-secondary">
                             <span class="btn-text">🎨 Create Account</span>
                             <span class="btn-icon"><i class="fas fa-user-plus"></i></span>
@@ -418,7 +418,7 @@
 
     /* Main Login Card */
     .login-game-card {
-        background: linear-gradient(135deg, rgba(30, 30, 50, 0.4) 0%, rgba(20, 20, 40, 0.3) 100%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
         backdrop-filter: blur(20px);
         border-radius: 30px;
         padding: 3rem 2.5rem;
@@ -487,9 +487,14 @@
     .rainbow-text {
         font-size: 2.8rem;
         font-weight: 800;
-        color: #000000;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: rainbow 3s linear infinite;
         margin-bottom: 0.5rem;
-        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
     }
 
     @@keyframes rainbow {
@@ -497,11 +502,10 @@
     }
 
     .game-subtitle {
-        color: #000000;
+        color: rgba(255, 255, 255, 0.9);
         font-size: 1.2rem;
-        font-weight: 600;
+        font-weight: 400;
         margin-bottom: 1rem;
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
     }
 
     .level-badge {
@@ -509,8 +513,8 @@
         padding: 0.5rem 1.5rem;
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         border-radius: 50px;
-        color: #000000;
-        font-weight: 700;
+        color: white;
+        font-weight: 600;
         font-size: 0.9rem;
         box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
         animation: badgeBounce 2s ease-in-out infinite;
@@ -531,7 +535,7 @@
         left: 20px;
         top: 50%;
         transform: translateY(-50%);
-        color: #667eea;
+        color: rgba(255, 255, 255, 0.6);
         font-size: 1.3rem;
         z-index: 2;
         animation: iconPulse 2s ease-in-out infinite;
@@ -545,12 +549,11 @@
     .form-control-game {
         width: 100%;
         padding: 1.2rem 1rem 1.2rem 3.8rem;
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: 2px solid rgba(102, 126, 234, 0.5);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 15px;
-        color: #2d3748 !important;
+        color: white;
         font-size: 1.05rem;
-        font-weight: 600;
         transition: all 0.4s ease;
         backdrop-filter: blur(10px);
         position: relative;
@@ -558,24 +561,14 @@
 
     .form-control-game:focus {
         outline: none;
-        background: rgba(255, 255, 255, 1) !important;
-        border-color: #667eea;
-        color: #1a202c !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+        border-color: transparent;
         box-shadow: 0 0 30px rgba(102, 126, 234, 0.6), 0 0 60px rgba(240, 147, 251, 0.4);
         transform: translateY(-3px);
     }
 
     .form-control-game::placeholder {
-        color: rgba(45, 55, 72, 0.5) !important;
-    }
-
-    .form-control-game:-webkit-autofill,
-    .form-control-game:-webkit-autofill:hover,
-    .form-control-game:-webkit-autofill:focus {
-        -webkit-text-fill-color: #2d3748 !important;
-        -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.95) inset !important;
-        box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.95) inset !important;
-        transition: background-color 5000s ease-in-out 0s;
+        color: rgba(255, 255, 255, 0.5);
     }
 
     .input-border-effect {
@@ -600,7 +593,7 @@
         transform: translateY(-50%);
         background: none;
         border: none;
-        color: #667eea;
+        color: rgba(255, 255, 255, 0.7);
         cursor: pointer;
         font-size: 1.3rem;
         transition: all 0.3s ease;
@@ -608,7 +601,7 @@
     }
 
     .password-toggle:hover {
-        color: #764ba2;
+        color: white;
         transform: translateY(-50%) scale(1.2);
     }
 
@@ -623,8 +616,7 @@
         display: flex;
         align-items: center;
         cursor: pointer;
-        color: #000000;
-        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
     }
 
     .custom-checkbox input {
@@ -679,8 +671,7 @@
     .btn-rainbow {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
         background-size: 200% auto;
-        color: #000000;
-        font-weight: 800;
+        color: white;
         box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
         animation: gradientShift 3s ease infinite;
     }
@@ -713,19 +704,18 @@
     }
 
     .btn-game-secondary {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-        color: #000000;
-        font-weight: 800;
-        border: 2px solid rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
         backdrop-filter: blur(10px);
     }
 
     .btn-game-secondary:hover {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
-        border-color: #667eea;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+        border-color: rgba(255, 255, 255, 0.5);
         transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
-        color: #000000;
+        box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+        color: white;
     }
 
     .btn-icon {
@@ -864,6 +854,141 @@
         }
     }
 </style>
+
+<div class="login-game-container">
+    <!-- Animated Gradient Orbs -->
+    <div class="gradient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <!-- Floating Quiz Icons with Colors -->
+    <div class="floating-icons">
+        <i class="fas fa-question-circle icon-float"></i>
+        <i class="fas fa-brain icon-float"></i>
+        <i class="fas fa-trophy icon-float"></i>
+        <i class="fas fa-star icon-float"></i>
+        <i class="fas fa-graduation-cap icon-float"></i>
+        <i class="fas fa-lightbulb icon-float"></i>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center align-items-center min-vh-80">
+            <div class="col-lg-5 col-md-7">
+                <!-- Main Login Card -->
+                <div class="login-game-card">
+                    <!-- Header with Game Title -->
+                    <div class="login-header">
+                        <div class="game-logo pulse-animation">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h2 class="game-title">Quiz Master</h2>
+                        <p class="game-subtitle">Enter the Arena of Knowledge</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger game-alert slide-in">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @ViewBag.Error
+                        </div>
+                    }
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success game-alert slide-in">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @ViewBag.Success
+                        </div>
+                    }
+                    
+                    <!-- Login Form -->
+                    <form method="post" action="@Url.Action("Login", "Users")" class="login-form">
+                        <!-- Username Input -->
+                        <div class="form-group-game mb-4">
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <input type="text" 
+                                   class="form-control-game" 
+                                   id="email" 
+                                   name="UserNameOrEmail" 
+                                   placeholder="Username or Email" 
+                                   required
+                                   autocomplete="username">
+                            <label class="floating-label">Player ID</label>
+                        </div>
+                        
+                        <!-- Password Input -->
+                        <div class="form-group-game mb-4">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" 
+                                   class="form-control-game" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Password" 
+                                   required
+                                   autocomplete="current-password">
+                            <label class="floating-label">Access Code</label>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Login Button -->
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn-game-primary">
+                                <span class="btn-text">Start Game</span>
+                                <span class="btn-icon"><i class="fas fa-play-circle"></i></span>
+                            </button>
+                        </div>
+
+                        <!-- Forgot Password -->
+                        <div class="text-center mb-3">
+                            <a href="#" class="game-link">
+                                <i class="fas fa-key me-1"></i>Forgot Password?
+                            </a>
+                        </div>
+                    </form>
+                    
+                    <!-- Divider -->
+                    <div class="divider-game">
+                        <span>OR</span>
+                    </div>
+                    
+                    <!-- Register Link -->
+                    <div class="text-center mt-4">
+                        <p class="text-white mb-3">New Player?</p>
+                        <a href="@Url.Action("Register", "Users")" class="btn-game-secondary">
+                            <span class="btn-text">Create Account</span>
+                            <span class="btn-icon"><i class="fas fa-user-plus"></i></span>
+                        </a>
+                    </div>
+
+                    <!-- Stats Footer -->
+                    <div class="login-footer">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span>1000+ Players</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-question"></i>
+                            <span>500+ Quizzes</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>Daily Rewards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     /* Main Container */
@@ -1106,9 +1231,9 @@
     }
 
     .divider-game span {
-        color: #000000;
+        color: rgba(255, 255, 255, 0.6);
         padding: 0 1rem;
-        font-weight: 700;
+        font-weight: 600;
     }
 
     /* Links */
@@ -1148,11 +1273,10 @@
 
     /* Alerts */
     .game-alert {
-        background: rgba(255, 255, 255, 0.95) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(102, 126, 234, 0.4) !important;
-        color: #000000 !important;
-        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
         border-radius: 15px;
         margin-bottom: 1.5rem;
     }

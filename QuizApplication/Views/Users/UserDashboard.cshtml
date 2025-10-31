@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 dashboard-wrapper">
     <!-- Page Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <div>
@@ -368,54 +368,176 @@
 </div>
 
 <style>
+    /* Dashboard wrapper */
+    .dashboard-wrapper {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    /* Glassmorphism Cards */
+    .card {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(31, 38, 135, 0.25) !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+
+    /* Colored Left Borders with Transparency */
     .border-left-primary {
-        border-left: 0.25rem solid #4e73df !important;
+        border-left: 0.25rem solid rgba(78, 115, 223, 0.8) !important;
+        background: linear-gradient(135deg, rgba(78, 115, 223, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
     }
+    
     .border-left-success {
-        border-left: 0.25rem solid #1cc88a !important;
+        border-left: 0.25rem solid rgba(28, 200, 138, 0.8) !important;
+        background: linear-gradient(135deg, rgba(28, 200, 138, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
     }
+    
     .border-left-info {
-        border-left: 0.25rem solid #36b9cc !important;
+        border-left: 0.25rem solid rgba(54, 185, 204, 0.8) !important;
+        background: linear-gradient(135deg, rgba(54, 185, 204, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
     }
+    
     .border-left-warning {
-        border-left: 0.25rem solid #f6c23e !important;
+        border-left: 0.25rem solid rgba(246, 194, 62, 0.8) !important;
+        background: linear-gradient(135deg, rgba(246, 194, 62, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
     }
+    
     .border-left-danger {
-        border-left: 0.25rem solid #e74a3b !important;
+        border-left: 0.25rem solid rgba(231, 74, 59, 0.8) !important;
+        background: linear-gradient(135deg, rgba(231, 74, 59, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
     }
+
+    /* Transparent Colored Cards */
+    .bg-success {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.85) 0%, rgba(32, 201, 151, 0.85) 100%) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .bg-info {
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.85) 0%, rgba(54, 185, 204, 0.85) 100%) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .bg-warning {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.85) 0%, rgba(246, 194, 62, 0.85) 100%) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+
+    /* Transparent Header */
+    .card-header {
+        background: rgba(248, 249, 250, 0.6) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
+    
     .bg-gradient-primary {
-        background: linear-gradient(45deg, #007bff, #0056b3);
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.85) 0%, rgba(0, 86, 179, 0.85) 100%) !important;
+        backdrop-filter: blur(10px);
+        border: none !important;
     }
+
+    /* Alert Transparency */
+    .alert {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .alert-warning {
+        background: rgba(255, 243, 205, 0.9) !important;
+        border-color: rgba(255, 193, 7, 0.3) !important;
+    }
+
+    .alert-info {
+        background: rgba(209, 236, 241, 0.9) !important;
+        border-color: rgba(23, 162, 184, 0.3) !important;
+    }
+
+    /* Text Colors */
     .text-gray-800 {
-        color: #5a5c69 !important;
+        color: #2d3748 !important;
+        font-weight: 600;
     }
+    
     .text-gray-300 {
-        color: #dddfeb !important;
+        color: rgba(189, 195, 199, 0.6) !important;
     }
+    
     .font-weight-bold {
         font-weight: 700 !important;
     }
+    
     .text-xs {
         font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
+
+    /* Progress Bar */
+    .progress {
+        background: rgba(233, 236, 239, 0.5) !important;
+        backdrop-filter: blur(5px);
+    }
+    
     .progress-sm {
         height: 0.5rem;
     }
-    .card {
-        transition: transform 0.2s ease-in-out;
-    }
-    .card:hover {
-        transform: translateY(-2px);
-    }
+
+    /* Border Right */
     .border-right {
-        border-right: 1px solid #e3e6f0 !important;
+        border-right: 1px solid rgba(227, 230, 240, 0.5) !important;
     }
+
+    /* Animations */
     .fa-shake {
         animation: shake 0.5s ease-in-out infinite;
     }
+    
     @@keyframes shake {
         0%, 100% { transform: rotate(0deg); }
         10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
         20%, 40%, 60%, 80% { transform: rotate(10deg); }
+    }
+
+    /* Icon Styling */
+    .card-body i.fa-2x {
+        opacity: 0.3;
+        transition: opacity 0.3s ease;
+    }
+
+    .card:hover .card-body i.fa-2x {
+        opacity: 0.5;
+    }
+
+    /* Badge Transparency */
+    .badge {
+        backdrop-filter: blur(10px);
+    }
+
+    /* Page Header */
+    .h3 {
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Responsive Improvements */
+    @@media (max-width: 768px) {
+        .card {
+            margin-bottom: 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem !important;
+        }
     }
 </style>

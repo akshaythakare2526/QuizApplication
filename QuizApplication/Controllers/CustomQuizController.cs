@@ -142,6 +142,12 @@ namespace QuizApplication.Controllers
             return View(quiz.Questions.OrderBy(q => q.QuestionOrder).ToList());
         }
 
+        // GET: CustomQuiz/SelectQuestions/5 -> Redirect to AddQuestions for now
+        public IActionResult SelectQuestions(int id)
+        {
+            return RedirectToAction("AddQuestions", new { id });
+        }
+
         // POST: CustomQuiz/AddQuestion
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -230,7 +236,7 @@ namespace QuizApplication.Controllers
 
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.CreatedBy)
-                .Include(q => q.Questions.OrderBy(x => x.QuestionOrder))
+                .Include(q => q.Questions)
                 .Include(q => q.Assignments)
                     .ThenInclude(a => a.AssignedToUser)
                 .FirstOrDefaultAsync(q => q.UserQuizId == id);
@@ -250,8 +256,31 @@ namespace QuizApplication.Controllers
                 return Forbid();
             }
 
-            ViewBag.CanEdit = isCreator || isAdmin;
-            return View(quiz);
+            var vm = new CustomQuizDetailsViewModel
+            {
+                CustomQuizId = quiz.UserQuizId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                CreatedBy = quiz.CreatedBy?.Username ?? "user",
+                CreatedDate = quiz.CreatedDate,
+                TimeLimit = quiz.TimeLimit,
+                IsPublic = quiz.IsPublic,
+                CategoryName = null,
+                DifficultyLevel = null,
+                QuestionCount = quiz.Questions?.Count ?? 0,
+                AssignedUsers = quiz.Assignments.Select(a => new AssignedUserInfo
+                {
+                    Username = a.AssignedToUser!.Username,
+                    AssignedDate = a.AssignedDate,
+                    IsCompleted = a.IsCompleted,
+                    CompletedDate = a.CompletedDate,
+                    Score = a.Score
+                }).ToList(),
+                CanEdit = isCreator || isAdmin,
+                CanTake = quiz.IsPublic || isAssignedUser || isCreator || isAdmin
+            };
+
+            return View(vm);
         }
 
         // GET: CustomQuiz/AssignUsers/5
@@ -284,16 +313,26 @@ namespace QuizApplication.Controllers
                 .OrderBy(u => u.Username)
                 .ToListAsync();
 
-            ViewBag.QuizId = id;
-            ViewBag.QuizTitle = quiz.Title;
-            ViewBag.AssignedUserIds = quiz.Assignments.Select(a => a.AssignedToUserId).ToList();
-            return View(users);
+            var vm = new AssignQuizViewModel
+            {
+                CustomQuizId = id,
+                QuizTitle = quiz.Title,
+                AvailableUsers = users.Select(u => new UserSelectionItem
+                {
+                    UserId = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    IsSelected = quiz.Assignments.Any(a => a.AssignedToUserId == u.Id)
+                }).ToList()
+            };
+
+            return View(vm);
         }
 
         // POST: CustomQuiz/AssignUsers
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignUsers(int quizId, int[] selectedUserIds)
+        public async Task<IActionResult> AssignUsers(int customQuizId, int[] selectedUserIds)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -304,7 +343,7 @@ namespace QuizApplication.Controllers
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.Questions)
                 .Include(q => q.Assignments)
-                .FirstOrDefaultAsync(q => q.UserQuizId == quizId && q.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.UserQuizId == customQuizId && q.CreatedByUserId == userId);
 
             if (quiz == null)
             {
@@ -323,7 +362,7 @@ namespace QuizApplication.Controllers
                     {
                         var assignment = new UserCustomQuizAssignment
                         {
-                            UserQuizId = quizId,
+                            UserQuizId = customQuizId,
                             AssignedToUserId = assignedUserId,
                             AssignedDate = DateTime.Now,
                             IsCompleted = false,
@@ -339,6 +378,128 @@ namespace QuizApplication.Controllers
             }
 
             return RedirectToAction("MyQuizzes");
+        }
+
+        // GET: CustomQuiz/Take/5 - Start taking a custom quiz
+        public async Task<IActionResult> Take(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.UserCustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Questions)
+                .Include(q => q.Assignments)
+                .FirstOrDefaultAsync(q => q.UserQuizId == id && q.IsActive);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            bool isCreator = quiz.CreatedByUserId == userId;
+            bool isAdmin = userRole == "Admin";
+            bool isAssignedUser = quiz.Assignments.Any(a => a.AssignedToUserId == userId);
+            if (!isCreator && !isAdmin && !isAssignedUser && !quiz.IsPublic)
+            {
+                return Forbid();
+            }
+
+            var vm = new TakeCustomQuizViewModel
+            {
+                CustomQuizId = quiz.UserQuizId,
+                Title = quiz.Title,
+                TimeLimit = quiz.TimeLimit,
+                StartTime = DateTime.Now,
+                Questions = quiz.Questions
+                    .OrderBy(q => q.QuestionOrder)
+                    .Select(q => new CustomQuizQuestionItem
+                    {
+                        QuestionId = q.QuestionId,
+                        QuestionText = q.QuestionText,
+                        Option1 = q.Option1,
+                        Option2 = q.Option2,
+                        Option3 = q.Option3,
+                        Option4 = q.Option4,
+                        QuestionOrder = q.QuestionOrder
+                    }).ToList()
+            };
+
+            return View(vm);
+        }
+
+        // POST: CustomQuiz/Submit - submit custom quiz answers
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Submit(int customQuizId, Dictionary<int, string> answers)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            var quiz = await _context.UserCustomQuizzes
+                .Include(q => q.Questions)
+                .Include(q => q.Assignments)
+                .FirstOrDefaultAsync(q => q.UserQuizId == customQuizId && q.IsActive);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            // Find or create assignment for this user
+            var assignment = quiz.Assignments.FirstOrDefault(a => a.AssignedToUserId == userId);
+            if (assignment == null)
+            {
+                assignment = new UserCustomQuizAssignment
+                {
+                    UserQuizId = customQuizId,
+                    AssignedToUserId = userId.Value,
+                    AssignedDate = DateTime.Now,
+                    IsCompleted = false,
+                    IsViewed = true,
+                    TotalQuestions = quiz.Questions.Count
+                };
+                _context.UserCustomQuizAssignments.Add(assignment);
+                await _context.SaveChangesAsync();
+            }
+
+            // Remove any previous answers for this assignment
+            var previousAnswers = _context.UserCustomQuizAnswers.Where(a => a.AssignmentId == assignment.AssignmentId);
+            _context.UserCustomQuizAnswers.RemoveRange(previousAnswers);
+
+            int correct = 0;
+            foreach (var q in quiz.Questions)
+            {
+                answers.TryGetValue(q.QuestionId, out var selected);
+                bool isCorrect = !string.IsNullOrEmpty(selected) && selected == q.CorrectAnswer;
+
+                var ans = new UserCustomQuizAnswer
+                {
+                    AssignmentId = assignment.AssignmentId,
+                    QuestionId = q.QuestionId,
+                    SelectedAnswer = selected ?? string.Empty,
+                    IsCorrect = isCorrect,
+                    AnsweredDate = DateTime.Now
+                };
+                _context.UserCustomQuizAnswers.Add(ans);
+                if (isCorrect) correct++;
+            }
+
+            // finalize assignment
+            assignment.IsCompleted = true;
+            assignment.CompletedDate = DateTime.Now;
+            assignment.Score = correct;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"You scored {correct} out of {quiz.Questions.Count}.";
+            return RedirectToAction("Details", new { id = customQuizId });
         }
 
         // GET: CustomQuiz/Delete/5
@@ -366,13 +527,28 @@ namespace QuizApplication.Controllers
                 return Forbid();
             }
 
-            return View(quiz);
+            var vm = new CustomQuizDetailsViewModel
+            {
+                CustomQuizId = quiz.UserQuizId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                CreatedBy = quiz.CreatedBy?.Username ?? "user",
+                CreatedDate = quiz.CreatedDate,
+                TimeLimit = quiz.TimeLimit,
+                IsPublic = quiz.IsPublic,
+                CategoryName = null,
+                DifficultyLevel = null,
+                QuestionCount = quiz.Questions?.Count ?? 0
+            };
+
+            return View(vm);
         }
 
-        // POST: CustomQuiz/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: CustomQuiz/Delete
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeletePost(int customQuizId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var userRole = HttpContext.Session.GetString("UserRole");
@@ -382,7 +558,7 @@ namespace QuizApplication.Controllers
             }
 
             var quiz = await _context.UserCustomQuizzes
-                .FirstOrDefaultAsync(q => q.UserQuizId == id);
+                .FirstOrDefaultAsync(q => q.UserQuizId == customQuizId);
 
             if (quiz == null)
             {

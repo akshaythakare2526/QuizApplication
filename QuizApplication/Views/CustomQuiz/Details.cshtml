@@ -161,7 +161,7 @@
                 <div class="d-grid gap-2">
                     @if (Model.CanTake)
                     {
-                        <a asp-controller="Quiz" asp-action="Start" asp-route-customQuizId="@Model.CustomQuizId" class="btn btn-success">
+                        <a asp-controller="CustomQuiz" asp-action="Take" asp-route-id="@Model.CustomQuizId" class="btn btn-success">
                             <i class="fas fa-play me-2"></i>Take This Quiz
                         </a>
                     }
