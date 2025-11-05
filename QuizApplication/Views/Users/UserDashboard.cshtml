@@ -368,110 +368,192 @@
 </div>
 
 <style>
-    /* Dashboard wrapper */
+    /* ========================================
+       MOONLIGHT SKY THEME - DASHBOARD STYLES
+       ======================================== */
+    
+    /* Dashboard wrapper with floating particles */
     .dashboard-wrapper {
         position: relative;
         min-height: 100vh;
-    }
-
-    /* Glassmorphism Cards */
-    .card {
-        background: rgba(255, 255, 255, 0.85) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+        overflow: hidden;
     }
     
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(31, 38, 135, 0.25) !important;
-        background: rgba(255, 255, 255, 0.95) !important;
+    /* Floating particles effect */
+    .dashboard-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle, rgba(100, 150, 255, 0.15) 1px, transparent 1px),
+            radial-gradient(circle, rgba(150, 200, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px, 80px 80px;
+        background-position: 0 0, 40px 40px;
+        animation: particleFloat 60s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    @@keyframes particleFloat {
+        from { transform: translateY(0); }
+        to { transform: translateY(-100px); }
     }
 
-    /* Colored Left Borders with Transparency */
+    /* Moonlight Glassmorphism Cards */
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.35),
+            0 0 15px rgba(100, 150, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Card hover with moonlight glow */
+    .card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 
+            0 20px 50px rgba(0, 0, 0, 0.45),
+            0 0 40px rgba(100, 150, 255, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
+    }
+
+    /* Moonlight Colored Left Borders with Glow */
     .border-left-primary {
-        border-left: 0.25rem solid rgba(78, 115, 223, 0.8) !important;
-        background: linear-gradient(135deg, rgba(78, 115, 223, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+        border-left: 0.3rem solid rgba(79, 109, 245, 0.9) !important;
+        background: linear-gradient(135deg, rgba(79, 109, 245, 0.15) 0%, rgba(100, 150, 255, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%) !important;
+        box-shadow: -3px 0 15px rgba(79, 109, 245, 0.3) !important;
     }
     
     .border-left-success {
-        border-left: 0.25rem solid rgba(28, 200, 138, 0.8) !important;
-        background: linear-gradient(135deg, rgba(28, 200, 138, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+        border-left: 0.3rem solid rgba(40, 167, 69, 0.9) !important;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.15) 0%, rgba(32, 201, 151, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%) !important;
+        box-shadow: -3px 0 15px rgba(40, 167, 69, 0.3) !important;
     }
     
     .border-left-info {
-        border-left: 0.25rem solid rgba(54, 185, 204, 0.8) !important;
-        background: linear-gradient(135deg, rgba(54, 185, 204, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+        border-left: 0.3rem solid rgba(23, 162, 184, 0.9) !important;
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.15) 0%, rgba(54, 185, 204, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%) !important;
+        box-shadow: -3px 0 15px rgba(23, 162, 184, 0.3) !important;
     }
     
     .border-left-warning {
-        border-left: 0.25rem solid rgba(246, 194, 62, 0.8) !important;
-        background: linear-gradient(135deg, rgba(246, 194, 62, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+        border-left: 0.3rem solid rgba(255, 193, 7, 0.9) !important;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(246, 194, 62, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%) !important;
+        box-shadow: -3px 0 15px rgba(255, 193, 7, 0.3) !important;
     }
     
     .border-left-danger {
-        border-left: 0.25rem solid rgba(231, 74, 59, 0.8) !important;
-        background: linear-gradient(135deg, rgba(231, 74, 59, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+        border-left: 0.3rem solid rgba(220, 53, 69, 0.9) !important;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.15) 0%, rgba(231, 74, 59, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%) !important;
+        box-shadow: -3px 0 15px rgba(220, 53, 69, 0.3) !important;
     }
 
-    /* Transparent Colored Cards */
+    /* Moonlight Colored Action Cards */
     .bg-success {
-        background: linear-gradient(135deg, rgba(40, 167, 69, 0.85) 0%, rgba(32, 201, 151, 0.85) 100%) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.25) 0%, rgba(32, 201, 151, 0.2) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 
+            0 8px 25px rgba(40, 167, 69, 0.3),
+            0 0 20px rgba(40, 167, 69, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .bg-success:hover {
+        box-shadow: 
+            0 12px 35px rgba(40, 167, 69, 0.45),
+            0 0 40px rgba(40, 167, 69, 0.35) !important;
     }
 
     .bg-info {
-        background: linear-gradient(135deg, rgba(23, 162, 184, 0.85) 0%, rgba(54, 185, 204, 0.85) 100%) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.25) 0%, rgba(54, 185, 204, 0.2) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 
+            0 8px 25px rgba(23, 162, 184, 0.3),
+            0 0 20px rgba(23, 162, 184, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .bg-info:hover {
+        box-shadow: 
+            0 12px 35px rgba(23, 162, 184, 0.45),
+            0 0 40px rgba(23, 162, 184, 0.35) !important;
     }
 
     .bg-warning {
-        background: linear-gradient(135deg, rgba(255, 193, 7, 0.85) 0%, rgba(246, 194, 62, 0.85) 100%) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.25) 0%, rgba(246, 194, 62, 0.2) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 
+            0 8px 25px rgba(255, 193, 7, 0.3),
+            0 0 20px rgba(255, 193, 7, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .bg-warning:hover {
+        box-shadow: 
+            0 12px 35px rgba(255, 193, 7, 0.45),
+            0 0 40px rgba(255, 193, 7, 0.35) !important;
     }
 
-    /* Transparent Header */
+    /* Moonlight Card Headers */
     .card-header {
-        background: rgba(248, 249, 250, 0.6) !important;
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.95);
     }
     
     .bg-gradient-primary {
-        background: linear-gradient(135deg, rgba(0, 123, 255, 0.85) 0%, rgba(0, 86, 179, 0.85) 100%) !important;
-        backdrop-filter: blur(10px);
-        border: none !important;
+        background: linear-gradient(135deg, rgba(79, 109, 245, 0.3) 0%, rgba(100, 150, 255, 0.25) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 
+            0 4px 15px rgba(79, 109, 245, 0.3),
+            0 0 20px rgba(79, 109, 245, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    /* Alert Transparency */
+    /* Moonlight Alert Styles */
     .alert {
-        background: rgba(255, 255, 255, 0.9) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
     .alert-warning {
-        background: rgba(255, 243, 205, 0.9) !important;
-        border-color: rgba(255, 193, 7, 0.3) !important;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(246, 194, 62, 0.15) 100%) !important;
+        border-color: rgba(255, 193, 7, 0.35) !important;
+        box-shadow: 0 4px 20px rgba(255, 193, 7, 0.25);
     }
 
     .alert-info {
-        background: rgba(209, 236, 241, 0.9) !important;
-        border-color: rgba(23, 162, 184, 0.3) !important;
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.2) 0%, rgba(54, 185, 204, 0.15) 100%) !important;
+        border-color: rgba(23, 162, 184, 0.35) !important;
+        box-shadow: 0 4px 20px rgba(23, 162, 184, 0.25);
     }
 
-    /* Text Colors */
+    /* Enhanced Text Styling */
     .text-gray-800 {
-        color: #2d3748 !important;
-        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(100, 150, 255, 0.3);
     }
     
     .text-gray-300 {
-        color: rgba(189, 195, 199, 0.6) !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        filter: drop-shadow(0 0 5px rgba(100, 150, 255, 0.2));
     }
     
     .font-weight-bold {
@@ -481,57 +563,132 @@
     .text-xs {
         font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.75);
     }
 
-    /* Progress Bar */
+    /* Moonlight Progress Bar */
     .progress {
-        background: rgba(233, 236, 239, 0.5) !important;
-        backdrop-filter: blur(5px);
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        overflow: visible;
+    }
+    
+    .progress-bar {
+        background: linear-gradient(90deg, rgba(40, 167, 69, 0.9) 0%, rgba(32, 201, 151, 0.9) 100%);
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
+        position: relative;
+        overflow: visible;
+    }
+    
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: progressShine 2s linear infinite;
+    }
+    
+    @@keyframes progressShine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
     
     .progress-sm {
-        height: 0.5rem;
+        height: 0.6rem;
+        border-radius: 10px;
     }
 
-    /* Border Right */
+    /* Moonlight Border */
     .border-right {
-        border-right: 1px solid rgba(227, 230, 240, 0.5) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Animations */
+    /* Enhanced Animations */
     .fa-shake {
-        animation: shake 0.5s ease-in-out infinite;
+        animation: moonlightShake 0.6s ease-in-out infinite;
     }
     
-    @@keyframes shake {
+    @@keyframes moonlightShake {
         0%, 100% { transform: rotate(0deg); }
-        10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
-        20%, 40%, 60%, 80% { transform: rotate(10deg); }
+        10%, 30%, 50%, 70%, 90% { transform: rotate(-12deg); }
+        20%, 40%, 60%, 80% { transform: rotate(12deg); }
     }
 
-    /* Icon Styling */
+    /* Icon Styling with Glow */
     .card-body i.fa-2x {
-        opacity: 0.3;
-        transition: opacity 0.3s ease;
+        color: rgba(255, 255, 255, 0.3);
+        filter: drop-shadow(0 0 8px rgba(100, 150, 255, 0.3));
+        transition: all 0.3s ease;
     }
 
     .card:hover .card-body i.fa-2x {
-        opacity: 0.5;
+        color: rgba(255, 255, 255, 0.5);
+        filter: drop-shadow(0 0 15px rgba(100, 150, 255, 0.5));
+        transform: scale(1.1);
     }
 
-    /* Badge Transparency */
+    /* Badge with Moonlight Glow */
     .badge {
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 0 15px rgba(100, 150, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Page Header */
+    /* Page Header with Glow */
     .h3 {
-        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        text-shadow: 
+            0 0 20px rgba(100, 150, 255, 0.6),
+            0 0 40px rgba(100, 150, 255, 0.3),
+            2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* Responsive Improvements */
+    /* Button Enhancements */
+    .btn {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Card Border Warning/Info Special Effects */
+    .card.border-warning {
+        border: 1px solid rgba(255, 193, 7, 0.3) !important;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.35),
+            0 0 25px rgba(255, 193, 7, 0.2);
+    }
+
+    /* Responsive Moonlight Improvements */
     @@media (max-width: 768px) {
+        .dashboard-wrapper::before {
+            background-size: 40px 40px, 60px 60px;
+        }
+        
+        .card {
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.2rem !important;
+        }
+        
+        .h3 {
+            font-size: 1.5rem;
+        }
+    }
+    
+    @@media (max-width: 576px) {
         .card {
             margin-bottom: 1rem;
         }
@@ -539,5 +696,28 @@
         .card-body {
             padding: 1rem !important;
         }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+    }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(100, 150, 255, 0.5) 0%, rgba(79, 109, 245, 0.5) 100%);
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, rgba(100, 150, 255, 0.7) 0%, rgba(79, 109, 245, 0.7) 100%);
     }
 </style>

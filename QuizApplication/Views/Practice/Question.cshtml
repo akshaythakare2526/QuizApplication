@@ -291,9 +291,11 @@
 }
 
 <style>
+    /* Moonlight Theme - Practice Question Page */
     .option-card {
-        background: #f8f9fa;
-        border: 2px solid #dee2e6;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 10px;
         padding: 15px;
         cursor: pointer;
@@ -301,19 +303,20 @@
         min-height: 80px;
         display: flex;
         align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .option-card:hover:not(.disabled) {
-        border-color: #007bff;
-        background: #e3f2fd;
+        border-color: rgba(100, 150, 255, 0.8);
+        background: linear-gradient(135deg, rgba(100, 150, 255, 0.15) 0%, rgba(100, 150, 255, 0.1) 100%) !important;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(100, 150, 255, 0.4);
     }
 
     .option-card.selected {
-        border-color: #28a745;
-        background: #d4edda;
-        box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+        border-color: rgba(40, 167, 69, 0.9);
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.25) 0%, rgba(40, 167, 69, 0.15) 100%) !important;
+        box-shadow: 0 0 25px rgba(40, 167, 69, 0.5);
     }
 
     .option-card.disabled {
@@ -322,15 +325,15 @@
     }
 
     .option-card.correct-answer {
-        border-color: #28a745 !important;
-        background: #d4edda !important;
-        box-shadow: 0 0 20px rgba(40, 167, 69, 0.5) !important;
+        border-color: rgba(40, 167, 69, 0.9) !important;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.25) 0%, rgba(40, 167, 69, 0.15) 100%) !important;
+        box-shadow: 0 0 30px rgba(40, 167, 69, 0.6) !important;
     }
 
     .option-card.wrong-answer {
-        border-color: #dc3545 !important;
-        background: #f8d7da !important;
-        box-shadow: 0 0 20px rgba(220, 53, 69, 0.5) !important;
+        border-color: rgba(220, 53, 69, 0.9) !important;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.25) 0%, rgba(220, 53, 69, 0.15) 100%) !important;
+        box-shadow: 0 0 30px rgba(220, 53, 69, 0.6) !important;
     }
 
     .option-header {
@@ -344,43 +347,55 @@
         justify-content: center;
         width: 35px;
         height: 35px;
-        background: #007bff;
+        background: rgba(100, 150, 255, 0.9);
         color: white;
         border-radius: 50%;
         font-weight: bold;
         font-size: 16px;
+        box-shadow: 0 2px 10px rgba(100, 150, 255, 0.4);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .option-card.selected .option-letter {
-        background: #28a745;
+        background: rgba(40, 167, 69, 0.9);
+        box-shadow: 0 2px 10px rgba(40, 167, 69, 0.6);
     }
 
     .option-card.correct-answer .option-letter {
-        background: #28a745 !important;
+        background: rgba(40, 167, 69, 0.9) !important;
+        box-shadow: 0 2px 10px rgba(40, 167, 69, 0.6) !important;
     }
 
     .option-card.wrong-answer .option-letter {
-        background: #dc3545 !important;
+        background: rgba(220, 53, 69, 0.9) !important;
+        box-shadow: 0 2px 10px rgba(220, 53, 69, 0.6) !important;
     }
 
     .option-content {
         flex: 1;
         font-size: 16px;
         line-height: 1.4;
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .question-text {
         line-height: 1.6;
         margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+        font-weight: 600;
     }
 
     .question-image {
-        border: 3px solid #dee2e6;
+        border: 3px solid rgba(255, 255, 255, 0.3);
         transition: transform 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .question-image:hover {
         transform: scale(1.05);
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
     }
 
     .answer-result {
@@ -389,6 +404,33 @@
 
     .result-icon {
         animation: bounceIn 0.8s ease;
+    }
+    
+    /* Card enhancements */
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    
+    .card-body {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.8) 0%, rgba(23, 162, 184, 0.9) 100%) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .card-header h5 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    /* Badge enhancements */
+    .badge {
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     @@keyframes slideInUp {

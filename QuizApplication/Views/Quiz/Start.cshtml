@@ -117,26 +117,43 @@
 }
 
 <style>
+    /* Moonlight Theme - Quiz Start Page */
     .info-card {
         padding: 20px;
         margin: 10px 0;
         border-radius: 10px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border: 1px solid #dee2e6;
-        transition: transform 0.3s ease;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .info-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(100, 150, 255, 0.3);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
+    }
+    
+    .info-card h5 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+        font-weight: 700;
+    }
+    
+    .info-card p {
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .quiz-info-container {
-        background: white;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(20px);
         border-radius: 15px;
         padding: 30px;
         margin: 20px 0;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .btn-lg {
@@ -144,11 +161,13 @@
         font-size: 18px;
         border-radius: 25px;
         transition: all 0.3s ease;
+        font-weight: 700;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     }
 
     .btn-lg:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
     .card {
@@ -159,5 +178,33 @@
     .card-header {
         border-radius: 15px 15px 0 0 !important;
         padding: 25px;
+    }
+    
+    .card-header h3 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    /* Alert boxes enhancement */
+    .alert ul li {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    
+    .alert ul li strong {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+    }
+    
+    /* Modal text visibility */
+    .modal-content {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-body p {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 </style>

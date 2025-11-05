@@ -228,45 +228,100 @@
 }
 
 <style>
+    /* Moonlight Theme - Practice Setup Page */
     .practice-mode-card {
         cursor: pointer;
         transition: all 0.3s ease;
-        border: 2px solid #dee2e6;
+        border: 2px solid rgba(255, 255, 255, 0.2);
         height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .practice-mode-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(100, 150, 255, 0.3);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
     }
 
     .practice-mode-card.border-primary {
-        border-color: #007bff !important;
-        background-color: #f8f9fa !important;
+        border-color: rgba(100, 150, 255, 0.8) !important;
+        background: linear-gradient(135deg, rgba(100, 150, 255, 0.15) 0%, rgba(100, 150, 255, 0.1) 100%) !important;
+        box-shadow: 0 0 25px rgba(100, 150, 255, 0.4);
+    }
+    
+    .practice-mode-card label {
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .practice-mode-card h6 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+    
+    .practice-mode-card small {
+        color: rgba(255, 255, 255, 0.75) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .category-card {
         cursor: pointer;
         transition: all 0.3s ease;
-        border: 2px solid #dee2e6;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .category-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(40, 167, 69, 0.3);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%) !important;
     }
 
     .category-card.border-success {
-        border-color: #28a745 !important;
-        background-color: #f8f9fa !important;
+        border-color: rgba(40, 167, 69, 0.8) !important;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.15) 0%, rgba(40, 167, 69, 0.1) 100%) !important;
+        box-shadow: 0 0 25px rgba(40, 167, 69, 0.4);
+    }
+    
+    .category-card label {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    
+    .category-card small {
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .form-check-input:checked {
-        background-color: #28a745;
-        border-color: #28a745;
+        background-color: rgba(40, 167, 69, 0.9);
+        border-color: rgba(40, 167, 69, 0.9);
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
     }
 
     .card-header {
         border-bottom: 3px solid rgba(255,255,255,0.2);
+        background: linear-gradient(135deg, rgba(23, 162, 184, 0.8) 0%, rgba(23, 162, 184, 0.9) 100%) !important;
+    }
+    
+    .card-header h4, .card-header p {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    /* Card body enhancements */
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    
+    .card-body {
+        color: rgba(255, 255, 255, 0.95);
     }
 </style>

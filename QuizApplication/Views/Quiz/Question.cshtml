@@ -228,7 +228,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times"></i> Cancel
                 </button>
-                <button type="button" class="btn btn-success" onclick="completeQuiz()">
+                <button type="button" class="btn btn-success" id="submitQuizBtn">
                     <i class="fas fa-check"></i> Submit Quiz
                 </button>
             </div>
@@ -268,6 +268,13 @@
             // Auto-save on option selection
             $(document).on('optionSelected', function() {
                 saveAnswer();
+            });
+            
+            // Submit Quiz button click handler
+            $('#submitQuizBtn').on('click', function(e) {
+                e.preventDefault();
+                console.log('Submit button clicked!');
+                completeQuiz();
             });
         });
 
@@ -526,10 +533,21 @@
         }
 
         function showCompleteModal() {
+            console.log('Opening complete modal...');
             $('#completeModal').modal('show');
         }
 
         function completeQuiz() {
+            console.log('Submitting quiz...');
+            console.log('Session ID:', $('#sessionId').val());
+            
+            // Close modal first
+            $('#completeModal').modal('hide');
+            
+            // Show loading state
+            const submitBtn = $('.modal-footer .btn-success');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Submitting...');
+            
             $.ajax({
                 url: '@Url.Action("CompleteQuiz", "Quiz")',
                 type: 'POST',
@@ -538,14 +556,21 @@
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function(response) {
+                    console.log('Quiz completion response:', response);
                     if (response.success) {
                         window.location.href = '@Url.Action("Result", "Quiz")?sessionId=' + $('#sessionId').val();
                     } else {
                         alert('Error completing quiz: ' + response.message);
+                        submitBtn.prop('disabled', false).html('<i class="fas fa-check"></i> Submit Quiz');
+                        $('#completeModal').modal('show');
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    console.error('Response:', xhr.responseText);
                     alert('Error completing quiz. Please try again.');
+                    submitBtn.prop('disabled', false).html('<i class="fas fa-check"></i> Submit Quiz');
+                    $('#completeModal').modal('show');
                 }
             });
         }
@@ -560,9 +585,11 @@
 }
 
 <style>
+    /* Moonlight Theme - Quiz Question Page */
     .option-card {
-        background: #f8f9fa;
-        border: 2px solid #dee2e6;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 10px;
         padding: 15px;
         cursor: pointer;
@@ -570,19 +597,20 @@
         min-height: 80px;
         display: flex;
         align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .option-card:hover {
-        border-color: #007bff;
-        background: #e3f2fd;
+        border-color: rgba(100, 150, 255, 0.8);
+        background: linear-gradient(135deg, rgba(100, 150, 255, 0.15) 0%, rgba(100, 150, 255, 0.1) 100%) !important;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(100, 150, 255, 0.4);
     }
 
     .option-card.selected {
-        border-color: #28a745;
-        background: #d4edda;
-        box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+        border-color: rgba(40, 167, 69, 0.9);
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.25) 0%, rgba(40, 167, 69, 0.15) 100%) !important;
+        box-shadow: 0 0 25px rgba(40, 167, 69, 0.5);
     }
 
     .option-header {
@@ -596,35 +624,45 @@
         justify-content: center;
         width: 35px;
         height: 35px;
-        background: #007bff;
+        background: rgba(100, 150, 255, 0.9);
         color: white;
         border-radius: 50%;
         font-weight: bold;
         font-size: 16px;
+        box-shadow: 0 2px 10px rgba(100, 150, 255, 0.4);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .option-card.selected .option-letter {
-        background: #28a745;
+        background: rgba(40, 167, 69, 0.9);
+        box-shadow: 0 2px 10px rgba(40, 167, 69, 0.6);
     }
 
     .option-content {
         flex: 1;
         font-size: 16px;
         line-height: 1.4;
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .question-text {
         line-height: 1.6;
         margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+        font-weight: 600;
     }
 
     .question-image {
-        border: 3px solid #dee2e6;
+        border: 3px solid rgba(255, 255, 255, 0.3);
         transition: transform 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .question-image:hover {
         transform: scale(1.05);
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
     }
 
     .question-grid {
@@ -639,6 +677,13 @@
         height: 40px;
         border-radius: 8px;
         font-weight: bold;
+        transition: all 0.3s ease;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    
+    .question-nav-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .stat-item {
@@ -648,12 +693,14 @@
     .stat-number {
         font-size: 24px;
         font-weight: bold;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
     }
 
     .stat-label {
         font-size: 12px;
         text-transform: uppercase;
-        color: #6c757d;
+        color: rgba(255, 255, 255, 0.7) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .timer-blink {
@@ -663,6 +710,121 @@
     @@keyframes blink {
         0%, 50% { opacity: 1; }
         51%, 100% { opacity: 0.3; }
+    }
+    
+    /* Card enhancements */
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    
+    .card-body {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, rgba(33, 37, 41, 0.8) 0%, rgba(33, 37, 41, 0.9) 100%) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .card-header h5 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    /* Badge enhancements */
+    .badge {
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        padding: 8px 12px;
+        font-weight: 600;
+    }
+    
+    /* Timer styling */
+    #timer {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(220, 53, 69, 0.5);
+    }
+    
+    /* Progress bar */
+    .progress {
+        background: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Modal enhancements */
+    .modal-content {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.8) 0%, rgba(255, 193, 7, 0.9) 100%) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-title {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    .modal-body {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    }
+    
+    .modal-body p, .modal-body ul li {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    
+    .modal-body ul li strong {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+    }
+    
+    .modal-body h6 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+    
+    .modal-footer {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-footer .btn {
+        position: relative;
+        z-index: 1;
+        cursor: pointer !important;
+        pointer-events: all !important;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-footer .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .modal-footer .btn-success {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(40, 167, 69, 1) 100%);
+        border: none;
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+    }
+    
+    .modal-footer .btn-success:hover {
+        box-shadow: 0 0 25px rgba(40, 167, 69, 0.7);
+    }
+    
+    .modal-footer .btn-secondary {
+        background: linear-gradient(135deg, rgba(108, 117, 125, 0.9) 0%, rgba(108, 117, 125, 1) 100%);
+        border: none;
     }
 
     @@media (max-width: 768px) {
