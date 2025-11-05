@@ -1,0 +1,826 @@
+/* ========================================
+   MOONLIGHT THEME - COMPREHENSIVE TEXT VISIBILITY FIX
+   Apply to all pages for consistent readability
+   ======================================== */
+
+/* ===== GLOBAL TEXT DEFAULTS ===== */
+body, p, div, span, li, td, th, caption, legend, figcaption {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Override any black or dark text */
+.text-dark, .text-black {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== HEADINGS WITH ENHANCED GLOW ===== */
+h1, .h1, .display-1 {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(100, 150, 255, 0.5) !important;
+    font-weight: 700;
+}
+
+h2, .h2, .display-2 {
+    color: rgba(255, 255, 255, 0.97) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(100, 150, 255, 0.4) !important;
+    font-weight: 700;
+}
+
+h3, .h3, .display-3 {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 150, 255, 0.35) !important;
+    font-weight: 700;
+}
+
+h4, .h4, .display-4 {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 18px rgba(100, 150, 255, 0.3) !important;
+    font-weight: 600;
+}
+
+h5, .h5 {
+    color: rgba(255, 255, 255, 0.94) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+    font-weight: 600;
+}
+
+h6, .h6 {
+    color: rgba(255, 255, 255, 0.93) !important;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 12px rgba(100, 150, 255, 0.25) !important;
+    font-weight: 600;
+}
+
+/* ===== FORM ELEMENTS ===== */
+label, .form-label, .form-check-label, .col-form-label {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 600;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 12px rgba(100, 150, 255, 0.25) !important;
+}
+
+/* ===== TEXT EMPHASIS ===== */
+strong, b, .fw-bold, .font-weight-bold {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6) !important;
+    font-weight: 700 !important;
+}
+
+em, i:not([class*="fa"]), .fst-italic {
+    color: rgba(255, 255, 255, 0.92) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== TEXT SIZES ===== */
+small, .small, .text-sm {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.lead {
+    color: rgba(255, 255, 255, 0.93) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== TEXT MUTED AND SECONDARY ===== */
+.text-muted, .text-secondary {
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ===== LINKS ===== */
+a {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: rgba(150, 200, 255, 0.98) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(100, 150, 255, 0.5) !important;
+}
+
+.btn-link {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== BOOTSTRAP COLOR UTILITIES ===== */
+.text-primary {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 12px rgba(100, 150, 255, 0.4) !important;
+}
+
+.text-success {
+    color: rgba(100, 230, 150, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 12px rgba(40, 167, 69, 0.4) !important;
+}
+
+.text-info {
+    color: rgba(100, 220, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 12px rgba(23, 162, 184, 0.4) !important;
+}
+
+.text-warning {
+    color: rgba(255, 220, 100, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 193, 7, 0.4) !important;
+}
+
+.text-danger {
+    color: rgba(255, 120, 140, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 12px rgba(220, 53, 69, 0.4) !important;
+}
+
+.text-white {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.text-light {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== CARD ELEMENTS ===== */
+.card-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.card-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+}
+
+.card-subtitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.card-header h1, .card-header h2, .card-header h3, 
+.card-header h4, .card-header h5, .card-header h6 {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+}
+
+.card-footer {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* ===== TABLE ELEMENTS ===== */
+table, .table {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+thead th, .table thead th {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+    font-weight: 700;
+}
+
+tbody td, .table tbody td {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.table-dark {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.table-dark th, .table-dark td {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== LIST ELEMENTS ===== */
+ul li, ol li, dl dt, dl dd {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== ALERT BOXES ===== */
+.alert {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.alert-heading {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.alert-info {
+    color: rgba(200, 240, 255, 0.95) !important;
+}
+
+.alert-info strong, .alert-info i, .alert-info b {
+    color: rgba(200, 240, 255, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6) !important;
+}
+
+.alert-warning {
+    color: rgba(255, 235, 170, 0.95) !important;
+}
+
+.alert-warning strong, .alert-warning i, .alert-warning b {
+    color: rgba(255, 235, 170, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6) !important;
+}
+
+.alert-success {
+    color: rgba(200, 255, 220, 0.95) !important;
+}
+
+.alert-success strong, .alert-success i, .alert-success b {
+    color: rgba(200, 255, 220, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6) !important;
+}
+
+.alert-danger {
+    color: rgba(255, 200, 210, 0.95) !important;
+}
+
+.alert-danger strong, .alert-danger i, .alert-danger b {
+    color: rgba(255, 200, 210, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    font-weight: 600;
+}
+
+.badge.bg-light, .badge.bg-white {
+    color: rgba(30, 30, 50, 0.95) !important;
+    text-shadow: none !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+.btn-light, .btn-outline-light {
+    color: rgba(30, 30, 50, 0.95) !important;
+    text-shadow: none !important;
+}
+
+.btn-light:hover, .btn-outline-light:hover {
+    color: rgba(30, 30, 50, 0.98) !important;
+    text-shadow: none !important;
+}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb-item {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.breadcrumb-item a {
+    color: rgba(100, 150, 255, 0.95) !important;
+}
+
+/* ===== NAVBAR ===== */
+.navbar-brand {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3) !important;
+    font-weight: 700;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: rgba(255, 255, 255, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6), 0 0 12px rgba(100, 150, 255, 0.4) !important;
+}
+
+.navbar-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== DROPDOWN MENU ===== */
+.dropdown-item {
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.dropdown-header {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== VALIDATION MESSAGES ===== */
+.field-validation-error,
+.validation-summary-errors,
+.validation-summary-errors li,
+span.text-danger {
+    color: rgba(255, 120, 140, 0.95) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(220, 53, 69, 0.4) !important;
+    font-weight: 600;
+}
+
+/* ===== FORM CONTROL TEXT ===== */
+.form-control, .form-select {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    background: rgba(26, 42, 108, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    text-shadow: none;
+}
+
+.form-control:focus, .form-select:focus {
+    color: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* Dropdown Select Options - Dark Background */
+.form-select option {
+    background: rgba(15, 32, 39, 0.98) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    padding: 8px 12px;
+}
+
+.form-select option:hover,
+.form-select option:checked {
+    background: rgba(79, 109, 245, 0.8) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* Ensure select dropdown is visible */
+select.form-select,
+select.form-control {
+    background: rgba(26, 42, 108, 0.4) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+select.form-select:focus,
+select.form-control:focus {
+    background: rgba(26, 42, 108, 0.5) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+    border-color: rgba(100, 150, 255, 0.6);
+    box-shadow: 0 0 0 0.25rem rgba(100, 150, 255, 0.25), 0 0 20px rgba(100, 150, 255, 0.3);
+}
+
+/* ===== PAGINATION ===== */
+.page-link {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.page-link:hover {
+    color: rgba(150, 200, 255, 0.98) !important;
+}
+
+.page-item.active .page-link {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== MODAL ===== */
+.modal-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.modal-body, .modal-footer {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ===== FOOTER ===== */
+footer, .footer, .footer-custom {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+footer p, .footer p, .footer-custom p {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== SPECIAL CASES ===== */
+.question-text {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 150, 255, 0.3) !important;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+.option-label {
+    color: rgba(255, 255, 255, 0.93) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== TEXT ALIGNMENT UTILITIES ===== */
+.text-center, .text-end, .text-start {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== RESPONSIVE TEXT ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    h1, .h1 {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(100, 150, 255, 0.5) !important;
+    }
+    
+    h2, h3, h4, .h2, .h3, .h4 {
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.4) !important;
+    }
+    
+    body, p, div, span, td, th {
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* ===== ICON VISIBILITY ===== */
+.fas, .fab, .far, .fa, i[class*="fa-"] {
+    filter: drop-shadow(0 0 8px rgba(100, 150, 255, 0.3));
+}
+
+/* Fix any Bootstrap default dark text */
+.text-body, .text-reset {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Headings with Strong Glow */
+h1 {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(100, 150, 255, 0.4);
+    font-weight: 700;
+}
+
+h2 {
+    color: rgba(255, 255, 255, 0.97) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 150, 255, 0.35);
+    font-weight: 700;
+}
+
+h3 {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 18px rgba(100, 150, 255, 0.3);
+    font-weight: 700;
+}
+
+h4 {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3);
+    font-weight: 600;
+}
+
+h5 {
+    color: rgba(255, 255, 255, 0.94) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 12px rgba(100, 150, 255, 0.25);
+    font-weight: 600;
+}
+
+h6 {
+    color: rgba(255, 255, 255, 0.93) !important;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 10px rgba(100, 150, 255, 0.2);
+    font-weight: 600;
+}
+
+/* Labels and Form Elements */
+label, .form-label, .form-check-label {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 600;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 10px rgba(100, 150, 255, 0.2);
+}
+
+/* Strong and Bold Text */
+strong, b, .fw-bold, .font-weight-bold {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+    font-weight: 700 !important;
+}
+
+/* Small Text */
+small, .small, .text-sm {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Text Muted */
+.text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Links */
+a {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgba(150, 200, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 12px rgba(100, 150, 255, 0.5);
+}
+
+/* Colored Text Classes */
+.text-primary {
+    color: rgba(100, 150, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(100, 150, 255, 0.4);
+}
+
+.text-success {
+    color: rgba(100, 230, 150, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(40, 167, 69, 0.4);
+}
+
+.text-info {
+    color: rgba(100, 220, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(23, 162, 184, 0.4);
+}
+
+.text-warning {
+    color: rgba(255, 220, 100, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 193, 7, 0.4);
+}
+
+.text-danger {
+    color: rgba(255, 120, 140, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 0 10px rgba(220, 53, 69, 0.4);
+}
+
+.text-white {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.text-dark {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Question Text - Special Treatment */
+.question-text {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(100, 150, 255, 0.3);
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* Option Labels */
+.option-label {
+    color: rgba(255, 255, 255, 0.93) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Card Text */
+.card-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.card-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 12px rgba(100, 150, 255, 0.25);
+}
+
+.card-subtitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Table Text */
+table, .table {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+thead th {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+}
+
+tbody td {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* List Items */
+ul li, ol li {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Alert Text */
+.alert {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.alert-heading {
+    color: rgba(255, 255, 255, 0.96) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.alert-info {
+    color: rgba(200, 240, 255, 0.95) !important;
+}
+
+.alert-info strong, .alert-info i {
+    color: rgba(200, 240, 255, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+.alert-warning {
+    color: rgba(255, 235, 170, 0.95) !important;
+}
+
+.alert-warning strong, .alert-warning i {
+    color: rgba(255, 235, 170, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+.alert-success {
+    color: rgba(200, 255, 220, 0.95) !important;
+}
+
+.alert-success strong, .alert-success i {
+    color: rgba(200, 255, 220, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+.alert-danger {
+    color: rgba(255, 200, 210, 0.95) !important;
+}
+
+.alert-danger strong, .alert-danger i {
+    color: rgba(255, 200, 210, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Badge Text */
+.badge {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    font-weight: 600;
+}
+
+/* Button Text */
+.btn {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+/* Breadcrumb */
+.breadcrumb-item {
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Navbar Text */
+.navbar-brand {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.3);
+    font-weight: 700;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 1) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6), 0 0 12px rgba(100, 150, 255, 0.4);
+}
+
+/* Dropdown Menu Items */
+.dropdown-item {
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-item:hover {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Validation Messages */
+.field-validation-error,
+.validation-summary-errors,
+.text-danger {
+    color: rgba(255, 120, 140, 0.95) !important;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(220, 53, 69, 0.4);
+    font-weight: 600;
+}
+
+/* Form Control Text */
+.form-control, .form-select {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    text-shadow: none;
+}
+
+/* Dropdown Select Options - Dark Background */
+.form-select option {
+    background: rgba(15, 32, 39, 0.98) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    padding: 8px 12px;
+}
+
+.form-select option:hover,
+.form-select option:checked {
+    background: rgba(79, 109, 245, 0.8) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* Ensure select dropdown is visible */
+select.form-select,
+select.form-control {
+    background: rgba(26, 42, 108, 0.4) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+select.form-select:focus,
+select.form-control:focus {
+    background: rgba(26, 42, 108, 0.5) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+    border-color: rgba(100, 150, 255, 0.6);
+    box-shadow: 0 0 0 0.25rem rgba(100, 150, 255, 0.25), 0 0 20px rgba(100, 150, 255, 0.3);
+}
+
+/* Page Title */
+.page-title, .display-1, .display-2, .display-3, .display-4 {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(100, 150, 255, 0.4);
+}
+
+/* Footer Text */
+footer, .footer-custom {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+footer p, .footer-custom p {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Icons with Glow Effect */
+.fas, .fab, .far, .fa {
+    filter: drop-shadow(0 0 8px rgba(100, 150, 255, 0.3));
+}
+
+/* Special Cases - Ensure Visibility */
+.text-center, .text-end, .text-start {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive Text Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(100, 150, 255, 0.5);
+    }
+    
+    h2, h3, h4 {
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 15px rgba(100, 150, 255, 0.4);
+    }
+    
+    body, p, div, span {
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+    }
+}
