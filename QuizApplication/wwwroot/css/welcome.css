@@ -19,7 +19,10 @@ body {
 .hero-section {
     position: relative;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Moonlight blue gradient */
+    background: radial-gradient(1200px 600px at 70% 20%, rgba(40, 76, 160, 0.35), transparent 60%),
+                radial-gradient(800px 500px at 20% 10%, rgba(18, 34, 84, 0.35), transparent 60%),
+                linear-gradient(135deg, #0b1533 0%, #0f1e4d 45%, #142b6f 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,12 +31,36 @@ body {
 
 .hero-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,96C1248,75,1344,53,1392,42.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-    background-size: cover;
+    inset: 0;
+}
+
+/* Star field layers */
+.stars, .stars:before, .stars:after {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    content: "";
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' viewBox='0 0 3 3'%3E%3Ccircle cx='1' cy='1' r='1' fill='white'/%3E%3C/svg%3E") repeat;
+    opacity: 0.25;
+    animation: starShift 100s linear infinite;
+}
+.stars:before { transform: translateY(-20px); opacity: 0.5; animation-duration: 160s; }
+.stars:after { transform: translateY(20px); opacity: 0.2; animation-duration: 220s; }
+
+@keyframes starShift {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(-200px) translateX(200px); }
+}
+
+/* Crescent moon */
+.moon {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: -20px 10px 0 0 rgba(255,255,255,0.9);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)) drop-shadow(0 0 30px rgba(100,160,255,0.2));
 }
 
 .hero-content {
@@ -104,6 +131,21 @@ body {
     animation: float 3s ease-in-out infinite;
 }
 
+/* Thoughts ticker */
+.thoughts-container {
+    max-width: 800px;
+    margin: 0 auto 1.25rem auto;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    color: #dfe9ff;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+.thoughts-line { display: none; }
+.thoughts-line.active { display: block; animation: fadeIn 0.6s ease both; }
+
 /* Buttons */
 .action-buttons .btn {
     font-weight: 600;
@@ -118,12 +160,12 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3455f1 0%, #4b6ef7 100%);
     border: none;
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #1ec3ff 0%, #00a3ff 100%);
     border: none;
 }
 
@@ -270,7 +312,7 @@ body {
 
 /* Call to Action Section */
 .cta-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0b1533 0%, #142b6f 100%);
     position: relative;
     overflow: hidden;
 }
@@ -282,7 +324,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,96C1248,75,1344,53,1392,42.7L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>') no-repeat top;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.08" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,96C1248,75,1344,53,1392,42.7L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>') no-repeat top;
     background-size: cover;
 }
 

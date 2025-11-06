@@ -4,6 +4,11 @@
 }
 
 <div class="login-game-container">
+    <!-- Night sky background -->
+    <div class="night-sky">
+        <div class="stars-layer"></div>
+        <div class="moon"></div>
+    </div>
     <!-- Animated Gradient Orbs -->
     <div class="gradient-orbs">
         <div class="orb orb-1"></div>
@@ -195,6 +200,19 @@
         overflow: hidden;
         padding: 2rem 0;
     }
+
+    /* Night sky */
+    .night-sky { position: fixed; inset: 0; z-index: 0; }
+    .stars-layer, .stars-layer:before, .stars-layer:after {
+        content: ""; position: absolute; inset: 0;
+        background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' viewBox='0 0 3 3'%3E%3Ccircle cx='1' cy='1' r='1' fill='white'/%3E%3C/svg%3E") repeat;
+        opacity: .18; animation: starDrift 140s linear infinite;
+    }
+    .stars-layer:before { opacity: .28; animation-duration: 200s; transform: translateY(-30px); }
+    .stars-layer:after { opacity: .12; animation-duration: 260s; transform: translateY(20px); }
+    @@keyframes starDrift { from { transform: translateX(0) } to { transform: translateX(240px) } }
+
+    .moon { position: absolute; top: 6%; right: 8%; width: 90px; height: 90px; border-radius: 50%; box-shadow: -16px 8px 0 0 rgba(255,255,255,.9); filter: drop-shadow(0 0 8px rgba(255,255,255,.4)); }
 
     /* Animated Gradient Orbs */
     .gradient-orbs {
@@ -487,9 +505,9 @@
     .rainbow-text {
         font-size: 2.8rem;
         font-weight: 800;
-        color: #000000;
+        color: #ffffff;
         margin-bottom: 0.5rem;
-        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 4px 22px rgba(52, 85, 241, 0.5);
     }
 
     @@keyframes rainbow {
@@ -497,22 +515,22 @@
     }
 
     .game-subtitle {
-        color: #000000;
+        color: rgba(223, 233, 255, 0.9);
         font-size: 1.2rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 2px 12px rgba(52, 85, 241, 0.35);
     }
 
     .level-badge {
         display: inline-block;
         padding: 0.5rem 1.5rem;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #3455f1 0%, #4b6ef7 100%);
         border-radius: 50px;
-        color: #000000;
+        color: #ffffff;
         font-weight: 700;
         font-size: 0.9rem;
-        box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+        box-shadow: 0 10px 24px rgba(52, 85, 241, 0.35);
         animation: badgeBounce 2s ease-in-out infinite;
     }
 
@@ -1106,7 +1124,7 @@
     }
 
     .divider-game span {
-        color: #000000;
+        color: rgba(223, 233, 255, 0.9);
         padding: 0 1rem;
         font-weight: 700;
     }

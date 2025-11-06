@@ -86,6 +86,32 @@ namespace QuizApplication.Controllers
             return View(quizzes);
         }
 
+        // GET: CustomQuiz/ManageAll - Admin: view and manage all custom quizzes
+        public async Task<IActionResult> ManageAll()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Users");
+            }
+
+            if (userRole != "Admin")
+            {
+                return Forbid();
+            }
+
+            var quizzes = await _context.UserCustomQuizzes
+                .Include(q => q.CreatedBy)
+                .Include(q => q.Questions)
+                .Include(q => q.Assignments)
+                .Where(q => q.IsActive)
+                .OrderByDescending(q => q.CreatedDate)
+                .ToListAsync();
+
+            return View("ManageAll", quizzes);
+        }
+
         // GET: CustomQuiz/Create - Show create quiz form
         public IActionResult Create()
         {
@@ -129,6 +155,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> AddQuestions(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Users");
@@ -136,11 +163,17 @@ namespace QuizApplication.Controllers
 
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.Questions)
-                .FirstOrDefaultAsync(q => q.UserQuizId == id && q.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.UserQuizId == id);
 
             if (quiz == null)
             {
                 return NotFound();
+            }
+
+            // Allow only creator or admin to edit questions
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
             }
 
             ViewBag.QuizId = id;
@@ -162,6 +195,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> AddQuestion(int quizId, [Bind("QuestionText,Option1,Option2,Option3,Option4,CorrectAnswer")] UserCustomQuizQuestion question)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Users");
@@ -169,11 +203,16 @@ namespace QuizApplication.Controllers
 
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.Questions)
-                .FirstOrDefaultAsync(q => q.UserQuizId == quizId && q.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.UserQuizId == quizId);
 
             if (quiz == null)
             {
                 return NotFound();
+            }
+
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
             }
 
             if (ModelState.IsValid)
@@ -198,6 +237,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> DeleteQuestion(int id, int quizId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Users");
@@ -205,11 +245,16 @@ namespace QuizApplication.Controllers
 
             var question = await _context.UserCustomQuizQuestions
                 .Include(q => q.UserQuiz)
-                .FirstOrDefaultAsync(q => q.QuestionId == id && q.UserQuiz!.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.QuestionId == id);
 
             if (question == null)
             {
                 return NotFound();
+            }
+
+            if (question.UserQuiz!.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
             }
 
             _context.UserCustomQuizQuestions.Remove(question);
@@ -295,6 +340,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> AssignUsers(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Users");
@@ -303,11 +349,16 @@ namespace QuizApplication.Controllers
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.Questions)
                 .Include(q => q.Assignments)
-                .FirstOrDefaultAsync(q => q.UserQuizId == id && q.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.UserQuizId == id);
 
             if (quiz == null)
             {
                 return NotFound();
+            }
+
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
             }
 
             if (quiz.Questions.Count == 0)
@@ -343,6 +394,7 @@ namespace QuizApplication.Controllers
         public async Task<IActionResult> AssignUsers(int customQuizId, int[] selectedUserIds)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Users");
@@ -351,11 +403,16 @@ namespace QuizApplication.Controllers
             var quiz = await _context.UserCustomQuizzes
                 .Include(q => q.Questions)
                 .Include(q => q.Assignments)
-                .FirstOrDefaultAsync(q => q.UserQuizId == customQuizId && q.CreatedByUserId == userId);
+                .FirstOrDefaultAsync(q => q.UserQuizId == customQuizId);
 
             if (quiz == null)
             {
                 return NotFound();
+            }
+
+            if (quiz.CreatedByUserId != userId && userRole != "Admin")
+            {
+                return Forbid();
             }
 
             if (selectedUserIds != null && selectedUserIds.Length > 0)
@@ -385,6 +442,11 @@ namespace QuizApplication.Controllers
                 TempData["SuccessMessage"] = $"Quiz assigned to {selectedUserIds.Length} user(s) successfully!";
             }
 
+            // Redirect admins back to ManageAll to keep context; creators to MyQuizzes
+            if (userRole == "Admin")
+            {
+                return RedirectToAction("ManageAll");
+            }
             return RedirectToAction("MyQuizzes");
         }
 
