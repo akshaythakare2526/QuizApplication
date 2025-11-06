@@ -56,6 +56,14 @@ namespace QuizApplication.Controllers
                 .OrderByDescending(a => a.AssignedDate)
                 .ToListAsync();
 
+            // Mark all unseen assignments as viewed when the user opens the page
+            var unseen = assignments.Where(a => !a.IsViewed).ToList();
+            if (unseen.Count > 0)
+            {
+                foreach (var a in unseen) a.IsViewed = true;
+                await _context.SaveChangesAsync();
+            }
+
             return View(assignments);
         }
 

@@ -243,6 +243,17 @@
 <input type="hidden" id="remainingTime" value="@Model.RemainingTimeInSeconds" />
 @Html.AntiForgeryToken()
 
+<!-- Fallback form for submission if AJAX fails -->
+<form id="completeQuizForm" method="post" action="@Url.Action("CompleteQuizRedirect", "Quiz")" class="d-none">
+    <input type="hidden" name="sessionId" value="@Model.SessionId" />
+    @Html.AntiForgeryToken()
+    <button type="submit">Submit</button>
+    <!-- button included for accessibility, but hidden due to d-none -->
+    <!-- This form is submitted programmatically if AJAX fails/timeouts -->
+    <!-- Keep it outside of modal to avoid z-index/pointer-events problems -->
+    
+</form>
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
@@ -534,7 +545,9 @@
 
         function showCompleteModal() {
             console.log('Opening complete modal...');
-            $('#completeModal').modal('show');
+            const modalEl = document.getElementById('completeModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false });
+            modal.show();
         }
 
         function completeQuiz() {
@@ -542,12 +555,24 @@
             console.log('Session ID:', $('#sessionId').val());
             
             // Close modal first
-            $('#completeModal').modal('hide');
+            try {
+                const modalEl = document.getElementById('completeModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            } catch {}
             
             // Show loading state
             const submitBtn = $('.modal-footer .btn-success');
             submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Submitting...');
             
+            let ajaxCompleted = false;
+            const ajaxTimeout = setTimeout(function() {
+                if (!ajaxCompleted) {
+                    console.warn('AJAX timeout. Submitting fallback form...');
+                    document.getElementById('completeQuizForm').submit();
+                }
+            }, 7000); // 7s safety timeout
+
             $.ajax({
                 url: '@Url.Action("CompleteQuiz", "Quiz")',
                 type: 'POST',
@@ -556,21 +581,38 @@
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function(response) {
+                    ajaxCompleted = true;
+                    clearTimeout(ajaxTimeout);
                     console.log('Quiz completion response:', response);
                     if (response.success) {
                         window.location.href = '@Url.Action("Result", "Quiz")?sessionId=' + $('#sessionId').val();
                     } else {
                         alert('Error completing quiz: ' + response.message);
                         submitBtn.prop('disabled', false).html('<i class="fas fa-check"></i> Submit Quiz');
-                        $('#completeModal').modal('show');
+                        try {
+                            const modalEl = document.getElementById('completeModal');
+                            const modal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false });
+                            modal.show();
+                        } catch {}
                     }
                 },
                 error: function(xhr, status, error) {
+                    ajaxCompleted = true;
+                    clearTimeout(ajaxTimeout);
                     console.error('AJAX error:', status, error);
                     console.error('Response:', xhr.responseText);
-                    alert('Error completing quiz. Please try again.');
-                    submitBtn.prop('disabled', false).html('<i class="fas fa-check"></i> Submit Quiz');
-                    $('#completeModal').modal('show');
+                    // Fallback: submit form to server for redirect
+                    try {
+                        document.getElementById('completeQuizForm').submit();
+                    } catch (e) {
+                        alert('Error completing quiz. Please try again.');
+                        submitBtn.prop('disabled', false).html('<i class="fas fa-check"></i> Submit Quiz');
+                        try {
+                            const modalEl = document.getElementById('completeModal');
+                            const modal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static', keyboard: false });
+                            modal.show();
+                        } catch {}
+                    }
                 }
             });
         }

@@ -160,12 +160,12 @@ header {
   min-height: calc(100vh - 200px);
   padding: 20px 0;
   position: relative;
-  z-index: 1;
+  /* removed z-index to prevent stacking context that can block modal clicks */
 }
 
 .content-wrapper .container > main {
   position: relative;
-  z-index: 2;
+  /* removed z-index to avoid stacking issues with Bootstrap modal/backdrop */
 }
 
 /* Custom footer with moonlight transparency */

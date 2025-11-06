@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 quiz-history-page">
     <!-- Page Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <div>
@@ -67,7 +67,7 @@
                     @if (Model != null && Model.Any())
                     {
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
+                            <table class="table table-hover mb-0 align-middle">
                                 <thead class="table-dark">
                                     <tr>
                                         <th scope="col">
@@ -245,8 +245,8 @@
 </div>
 
 <!-- Details Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="detailsModalLabel">
@@ -395,15 +395,52 @@
     </script>
     
     <style>
+        /* Increase contrast and readability specifically for this page */
+        .quiz-history-page .card {
+            background: transparent !important; /* make card transparent so text stands out on app background */
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
         .bg-gradient-info {
-            background: linear-gradient(45deg, #17a2b8, #138496);
+            background: linear-gradient(45deg, rgba(23,162,184,0.95), rgba(19,132,150,0.95));
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
         }
         .text-gray-800 {
-            color: #5a5c69;
+            color: rgba(255,255,255,0.98) !important;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
         .breadcrumb {
             background-color: transparent;
             padding: 0;
+        }
+        .quiz-history-page .table thead th {
+            color: rgba(255,255,255,0.98) !important;
+            background: rgba(26,42,108,0.45) !important;
+        }
+        /* Make table body fully transparent and remove extra glass/blur from global .table */
+        .quiz-history-page .table {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .quiz-history-page .table tbody td,
+        .quiz-history-page .table tbody tr,
+        .quiz-history-page .table tbody td * {
+            background: transparent !important;
+        }
+        .quiz-history-page .table tbody td {
+            color: rgba(255,255,255,0.95) !important;
+        }
+        .quiz-history-page .table tbody td small,
+        .quiz-history-page .text-muted {
+            color: rgba(255,255,255,0.80) !important;
+        }
+        .quiz-history-page .table tbody tr:hover {
+            background-color: rgba(255,255,255,0.08) !important;
+        }
+        .quiz-history-page .badge {
+            border: 1px solid rgba(255,255,255,0.15);
         }
         .table th {
             border-top: none;
@@ -417,5 +454,33 @@
         .btn-group .btn {
             margin-right: 0;
         }
+
+        /* Details modal visual polish for readability */
+        #detailsModal .modal-content {
+            background: linear-gradient(135deg, rgba(26, 42, 108, 0.9) 0%, rgba(44, 83, 100, 0.9) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+        #detailsModal .modal-header {
+            background: linear-gradient(45deg, rgba(79,109,245,0.9), rgba(100,150,255,0.9)) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        #detailsModal .modal-title,
+        #detailsModal .modal-body,
+        #detailsModal .modal-body * {
+            color: rgba(255,255,255,0.95) !important;
+        }
+        #detailsModal .modal-footer {
+            background: rgba(255,255,255,0.06) !important;
+            border-top: 1px solid rgba(255,255,255,0.12);
+        }
+        #detailsModal .border {
+            border-color: rgba(255,255,255,0.2) !important;
+        }
+        #detailsModal .badge {
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        /* Darken backdrop so foreground pops */
+        .modal-backdrop.show { opacity: 0.8 !important; }
     </style>
 }

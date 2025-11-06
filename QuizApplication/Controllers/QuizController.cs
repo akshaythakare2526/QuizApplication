@@ -152,29 +152,24 @@ namespace QuizApplication.Controllers
                 return RedirectToAction("Result", new { sessionId });
             }
 
-            // Get questions based on session criteria
-            var categoryIds = JsonSerializer.Deserialize<List<int>>(session.SelectedCategories ?? "[]") ?? new List<int>();
-            var questionsQuery = _context.Questions
-                .Include(q => q.Category)
-                .Where(q => categoryIds.Contains(q.CategoryId));
+            // Use a fixed random order created once per session
+            var questionOrder = await GetOrCreateQuestionOrder(sessionId, session);
 
-            if (!string.IsNullOrEmpty(session.DifficultyLevel))
-            {
-                questionsQuery = questionsQuery.Where(q => q.DifficultyLevel == session.DifficultyLevel);
-            }
-
-            var questions = await questionsQuery
-                .OrderBy(q => Guid.NewGuid()) // Random order
-                .Take(session.NumberOfQuestions)
-                .ToListAsync();
-
-            if (questionIndex >= questions.Count)
+            if (questionIndex >= questionOrder.Count)
             {
                 await CompleteSession(sessionId);
                 return RedirectToAction("Result", new { sessionId });
             }
 
-            var currentQuestion = questions[questionIndex];
+            var currentQuestionId = questionOrder[questionIndex];
+            var currentQuestion = await _context.Questions
+                .Include(q => q.Category)
+                .FirstOrDefaultAsync(q => q.QuestionId == currentQuestionId);
+
+            if (currentQuestion == null)
+            {
+                return NotFound();
+            }
             
             // Get user's previous answers
             var userAnswers = await _context.UserAnswers
@@ -182,7 +177,7 @@ namespace QuizApplication.Controllers
                 .ToListAsync();
 
             var answeredQuestionIds = userAnswers.Select(ua => ua.QuestionId).ToList();
-            var allQuestionIds = questions.Select(q => q.QuestionId).ToList();
+            var allQuestionIds = questionOrder;
 
             var userAnswer = userAnswers.FirstOrDefault(ua => ua.QuestionId == currentQuestion.QuestionId);
 
@@ -193,7 +188,7 @@ namespace QuizApplication.Controllers
                 SessionId = sessionId,
                 QuestionId = currentQuestion.QuestionId,
                 CurrentQuestionIndex = questionIndex,
-                TotalQuestions = questions.Count,
+                TotalQuestions = questionOrder.Count,
                 QuestionText = currentQuestion.QuestionText,
                 QuestionImageData = currentQuestion.QuestionImageData,
                 ImageContentType = currentQuestion.ImageContentType,
@@ -206,7 +201,7 @@ namespace QuizApplication.Controllers
                 CategoryName = currentQuestion.Category?.CategoryName ?? "",
                 RemainingTimeInSeconds = Math.Max(0, remainingTime),
                 HasPrevious = questionIndex > 0,
-                HasNext = questionIndex < questions.Count - 1,
+                HasNext = questionIndex < questionOrder.Count - 1,
                 AnsweredQuestions = answeredQuestionIds,
                 AllQuestionIds = allQuestionIds
             };
@@ -280,6 +275,22 @@ namespace QuizApplication.Controllers
 
             await CompleteSession(sessionId);
             return Json(new { success = true });
+        }
+
+        // POST: Quiz/CompleteQuizRedirect (fallback for non-AJAX/form submissions)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteQuizRedirect(int sessionId)
+        {
+            var redirectResult = RedirectIfNotAuthenticated();
+            if (redirectResult != null)
+            {
+                // If not authenticated, send user to login
+                return RedirectToAction("Index", "Users");
+            }
+
+            await CompleteSession(sessionId);
+            return RedirectToAction("Result", new { sessionId });
         }
 
         // GET: Quiz/Result/5

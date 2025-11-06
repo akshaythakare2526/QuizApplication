@@ -13,7 +13,6 @@
             <p class="text-muted mb-0">Welcome back! Ready for your next quiz challenge?</p>
         </div>
         <div>
-            <span class="badge bg-primary fs-6 me-2">User</span>
             <span class="text-muted">Hello, @ViewBag.Username</span>
         </div>
     </div>
@@ -134,6 +133,58 @@
         </div>
     }
 
+    <!-- Pending Custom Quizzes Warning Banner -->
+    @if (ViewBag.PendingCustomQuizzes != null && ViewBag.PendingCustomQuizzes > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        <strong>@ViewBag.PendingCustomQuizzes pending custom quiz@(ViewBag.PendingCustomQuizzes > 1 ? "zes" : "")</strong>
+                    </h5>
+                    <p class="mb-3">You have @ViewBag.PendingCustomQuizzes pending custom quiz@(ViewBag.PendingCustomQuizzes > 1 ? "zes" : "") to complete.</p>
+
+                    <div class="row g-2">
+                        @if (ViewBag.PendingAssignments != null)
+                        {
+                            foreach (var assignment in ViewBag.PendingAssignments)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card border-danger">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title mb-2">
+                                                <i class="fas fa-clipboard-list me-1 text-danger"></i>
+                                                @assignment.UserQuiz.Title
+                                            </h6>
+                                            <p class="card-text small text-muted mb-2">
+                                                <i class="fas fa-user me-1"></i>From: <strong>@assignment.UserQuiz.CreatedBy.Username</strong><br/>
+                                                <i class="fas fa-clock me-1"></i>Time: @assignment.UserQuiz.TimeLimit minutes<br/>
+                                                <i class="fas fa-question-circle me-1"></i>Questions: @assignment.UserQuiz.Questions.Count<br/>
+                                                <i class="fas fa-calendar me-1"></i>Assigned: @assignment.AssignedDate.ToString("MMM dd, yyyy")
+                                            </p>
+                                            <a href="@Url.Action("Details", "CustomQuiz", new { id = assignment.UserQuizId })" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-play me-1"></i>Take Quiz
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <hr>
+                    <div class="mb-0">
+                        <a href="@Url.Action("AssignedQuizzes", "CustomQuiz")" class="btn btn-danger btn-sm">
+                            <i class="fas fa-inbox me-2"></i>View All Assigned Quizzes
+                        </a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Custom Quiz Stats Row -->
     @if (ViewBag.TotalAssignedQuizzes != null && ViewBag.TotalAssignedQuizzes > 0)
     {
@@ -154,21 +205,24 @@
                 </div>
             </div>
             
-            <div class="col-md-6 mb-3">
-                <div class="card border-left-danger shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pending Custom Quizzes</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PendingCustomQuizzes</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+            @if (ViewBag.PendingCustomQuizzes != null && ViewBag.PendingCustomQuizzes > 0)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pending Custom Quizzes</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PendingCustomQuizzes</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     }
 
@@ -189,7 +243,7 @@
                                     <div class="mb-3">
                                         <i class="fas fa-play fa-3x"></i>
                                     </div>
-                                    <h5 class="card-title">Take Quiz</h5>
+                                    <h5>Take Quiz</h5>
                                     <p class="card-text flex-grow-1">Start a new quiz session and test your knowledge</p>
                                     <a href="@Url.Action("Setup", "Quiz")" class="btn btn-light btn-sm mt-auto">Start Quiz</a>
                                 </div>
@@ -659,6 +713,21 @@
     .btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Fix low-contrast light buttons inside colored action cards */
+    .dashboard-wrapper .btn-light {
+        color: #1f2937 !important; /* dark text */
+        background: rgba(255, 255, 255, 0.96) !important;
+        border-color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: none !important;
+    }
+    .dashboard-wrapper .btn-light:hover,
+    .dashboard-wrapper .btn-light:focus {
+        color: #111827 !important;
+        background: #ffffff !important;
+        border-color: #ffffff !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25), 0 0 0 0.2rem rgba(100,150,255,0.25) !important;
     }
 
     /* Card Border Warning/Info Special Effects */
